@@ -21,6 +21,7 @@ public class LoginController {
 	     return user;  
 	    }
 	 
+	 //test method
 	 @RequestMapping(value = "/test", method = RequestMethod.GET)
 	    public String registration() {
 	     return "hello";  
