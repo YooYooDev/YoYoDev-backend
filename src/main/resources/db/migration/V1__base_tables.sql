@@ -1,3 +1,4 @@
+
 CREATE TABLE school(
 	id  SERIAL,
 	name   VARCHAR,
