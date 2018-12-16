@@ -1,5 +1,7 @@
 package com.yooyoo.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,15 +16,20 @@ import com.yooyoo.service.LoginService;
 public class LoginController {
 	@Autowired
 	LoginService loginService;
-	
+	Logger logger = LoggerFactory.getLogger(LoginController.class);
 	 @RequestMapping(value = "/login", method = RequestMethod.POST)
 	    public CredManager login(@ModelAttribute("userForm") CredManager userForm,  Model model) {
          CredManager user = loginService.authenticate(userForm);
+         logger.info("UserDetailas :- "+user);
 	     return user;  
 	    }
 	 
+	 
+	 
+	 //testing purpose
 	 @RequestMapping(value = "/test", method = RequestMethod.GET)
 	    public String registration() {
+		 
 	     return "hello";  
 	    }
 

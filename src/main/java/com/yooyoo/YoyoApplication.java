@@ -11,4 +11,5 @@ public class YoyoApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(YoyoApplication.class, args);
 	}
+
 }
