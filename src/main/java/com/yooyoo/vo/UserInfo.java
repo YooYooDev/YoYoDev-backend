@@ -2,7 +2,9 @@ package com.yooyoo.vo;
 
 import java.io.Serializable;
 
-import com.yooyoo.model.School;
+import javax.xml.bind.annotation.XmlElement;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -23,10 +25,16 @@ public class UserInfo implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	int id;
+	@XmlElement
 	String user_name;
+	@XmlElement
 	String email;
+	@XmlElement
 	String password;
-	School school;
+	@XmlElement
+	@JsonProperty("schoolInfo")
+	SchoolInfo school;
+	@XmlElement
 	String role;
 
 }
