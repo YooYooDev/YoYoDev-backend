@@ -21,9 +21,9 @@ public class SchoolInfo {
 	@XmlElement
 	int code;
 	@XmlElement
-	String owner_name;
+	String ownerName;
 	@XmlElement
-	String address1;
+	String address;
 	@XmlElement
 	String post;
 	@XmlElement
@@ -33,20 +33,20 @@ public class SchoolInfo {
 	@XmlElement
 	String country;
 	@XmlElement
-	String contact_person;
+	String contactPerson;
 	@XmlElement
-	String owner_mobile;
+	String ownerMobile;
 	@XmlElement
-	String email_id;
+	String emailId;
 	@XmlElement
 	int active;
 	@XmlElement
-	String registration_name;
+	String registrationName;
 	@XmlElement
-	int enable_fees;
+	int enableFees;
 	@XmlElement
-	int enable_attendance;
+	int enableAttendance;
 	@XmlElement
-	int enable_printed_worksheet;
+	int enablePrintedWorksheet;
 
 }

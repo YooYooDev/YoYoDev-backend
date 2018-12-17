@@ -26,7 +26,7 @@ public class UserInfo implements Serializable{
 	private static final long serialVersionUID = 1L;
 	int id;
 	@XmlElement
-	String user_name;
+	String userName;
 	@XmlElement
 	String email;
 	@XmlElement
