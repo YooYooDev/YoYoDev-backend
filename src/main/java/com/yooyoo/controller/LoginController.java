@@ -39,9 +39,9 @@ public class LoginController {
 	 public Profile getProfile(CredManager user){
 		 Profile p = new Profile();
 		 p.setAccessToken("test_token");
+		 p.setRole(user.getRole().getName());
 		 UserInfo userInfo = new UserInfo();
 		 userInfo.setEmail(user.getEmail());
-		 userInfo.setRole(user.getRole().getName());
 		 userInfo.setUserName(user.getUser_name());
 		 SchoolInfo school = new SchoolInfo();
 		 school.setName(user.getSchool().getName());
@@ -50,6 +50,11 @@ public class LoginController {
 		 school.setEnableAttendance(user.getSchool().getEnable_attendance());
 		 school.setEnableFees(user.getSchool().getEnable_fees());
 		 school.setEnablePrintedWorksheet(user.getSchool().getEnable_attendance());
+		 school.setActive(user.getSchool().getActive());
+		 school.setAddress(user.getSchool().getAddress1());
+		 school.setCode(user.getSchool().getCode());
+		 school.setRegistrationName(user.getSchool().getRegistration_name());
+		 school.setState(user.getSchool().getState());
 		 userInfo.setSchool(school);
 		 p.setUserInfo(userInfo);
 		 return p;

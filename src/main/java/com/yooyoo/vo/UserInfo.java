@@ -34,7 +34,5 @@ public class UserInfo implements Serializable{
 	@XmlElement
 	@JsonProperty("schoolInfo")
 	SchoolInfo school;
-	@XmlElement
-	String role;
 
 }

@@ -26,6 +26,8 @@ public class Profile implements  Serializable{
 	private static final long serialVersionUID = 1L;
 	private String accessToken;
 	@XmlElement
+	private String role;
+	@XmlElement
 	@JsonProperty("userInfo")
 	private UserInfo userInfo;
 
