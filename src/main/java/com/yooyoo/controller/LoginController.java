@@ -55,6 +55,7 @@ public class LoginController {
 		 school.setCode(user.getSchool().getCode());
 		 school.setRegistrationName(user.getSchool().getRegistration_name());
 		 school.setState(user.getSchool().getState());
+		 school.setId(user.getSchool().getId());
 		 userInfo.setSchool(school);
 		 p.setUserInfo(userInfo);
 		 return p;

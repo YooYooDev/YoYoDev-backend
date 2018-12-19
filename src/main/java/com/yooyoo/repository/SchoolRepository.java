@@ -4,6 +4,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.yooyoo.model.School;
 
-public interface SchoolRepository extends CrudRepository<School, Long>{
-
+public interface SchoolRepository extends CrudRepository<School, Integer>{
+	public School findById(int id);
+	
 }

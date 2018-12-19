@@ -17,6 +17,8 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class SchoolInfo {
 	@XmlElement
+	int id;
+	@XmlElement
 	String name;
 	@XmlElement
 	int code;
