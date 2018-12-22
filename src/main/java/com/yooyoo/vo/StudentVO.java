@@ -36,5 +36,18 @@ public class StudentVO implements Serializable{
 	Date createdAt;
 	Date updatedAt;
 	String deleted;
+	
+	Date dob;
+	String photo;
+	String gender;
+	//String class
+	String fatherName;
+	String motherName;
+	String fatherProfession;
+	String motherProfession;
+	String address;
+	String city;
+	String state;
+	String pinCode;
 
 }

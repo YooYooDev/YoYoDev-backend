@@ -49,5 +49,20 @@ public class Student {
 	Date created_at;
 	Date updatedd_at;
 	String deleted;
+	Date dob;
+	String photo;
+	String gender;
+	//String class
+	String fatherName;
+	String motherName;
+	String fatherProfession;
+	String motherProfession;
+	String address;
+	String city;
+	String state;
+	String pinCode;
+	@ManyToOne
+	@JoinColumn(name = "grade_id")
+	Grade grade;
 
 }

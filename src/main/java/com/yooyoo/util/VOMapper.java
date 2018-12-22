@@ -9,6 +9,7 @@ public class VOMapper {
 	
 	public static Student getStudent(StudentVO studentVO){
 		Student student = new Student();
+		student.setId(studentVO.getId());
 		student.setFirst_name(studentVO.getFirstName());
 		student.setMiddle_name(studentVO.getMiddleName());
 		student.setLast_name(studentVO.getLastName());
@@ -20,6 +21,17 @@ public class VOMapper {
 		student.setParent_mobile2(studentVO.getParentMobile2());
 		student.setPassword("password");
 		student.setDeleted("N");
+		//new fields
+		student.setDob(studentVO.getDob());
+		student.setPhoto(studentVO.getPhoto());
+		student.setGender(studentVO.getGender());
+		student.setFatherName(studentVO.getFatherName());
+		student.setMotherName(studentVO.getMotherName());
+		student.setFatherProfession(studentVO.getFatherProfession());
+		student.setMotherProfession(studentVO.getMotherProfession());
+		student.setAddress(studentVO.getAddress());
+		student.setCity(studentVO.getCity());
+		student.setPinCode(studentVO.getPinCode());
 		return student;
 	}
 	
@@ -28,16 +40,16 @@ public class VOMapper {
 		school.setId(schoolVO.getId());
 		school.setName(schoolVO.getName());
 		school.setCode(schoolVO.getCode());
-		school.setAddress1(schoolVO.getAddress());
+		school.setAddress(schoolVO.getAddress());
 		school.setPost(schoolVO.getPost());
 		school.setPin(schoolVO.getPin());
 		school.setState(schoolVO.getState());
 		school.setCountry(schoolVO.getCountry());
-		school.setContact_person(schoolVO.getContactPerson());
-		school.setRegistration_name(schoolVO.getRegistrationName());
-		school.setEmail_id(schoolVO.getEmailId());
-		school.setOwner_mobile(schoolVO.getOwnerMobile());
-		school.setOwner_name(schoolVO.getOwnerName());
+		school.setContactPerson(schoolVO.getContactPerson());
+		school.setRegistrationName(schoolVO.getRegistrationName());
+		school.setEmailId(schoolVO.getEmailId());
+		school.setOwnerMobile(schoolVO.getOwnerMobile());
+		school.setOwnerName(schoolVO.getOwnerName());
 		return null;
 	}
 
@@ -53,6 +65,19 @@ public class VOMapper {
 		studentVO.setParentMobile1(student.getParent_mobile1());
 		studentVO.setParentMobile2(student.getParent_mobile2());
 		studentVO.setDeleted("N");
+		
+		//new fields
+		//new fields
+		studentVO.setDob(student.getDob());
+		studentVO.setPhoto(student.getPhoto());
+		studentVO.setGender(student.getGender());
+		studentVO.setFatherName(student.getFatherName());
+		studentVO.setMotherName(student.getMotherName());
+		studentVO.setFatherProfession(student.getFatherProfession());
+		studentVO.setMotherProfession(student.getMotherProfession());
+		studentVO.setAddress(student.getAddress());
+		studentVO.setCity(student.getCity());
+		studentVO.setPinCode(student.getPinCode());
 		return studentVO;
 	}
 

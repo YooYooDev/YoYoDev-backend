@@ -34,21 +34,23 @@ public class StudentController {
 	
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public ResultVO updateStudent(@RequestBody StudentVO student) {
-        //int user = studentService.saveStudent(student);
-        logger.info("UserDetailas :- "+student);
-        ResultVO vo = new ResultVO();
-	     vo.setMessge("student updated sucessfully"); 
-	     vo.setStatus(200);
-	     return vo;
+		studentService.saveStudent(student);
+		logger.info("UserDetailas :- " + student);
+		ResultVO vo = new ResultVO();
+		vo.setMessge("student updated sucessfully");
+		vo.setStatus(200);
+		return vo;
 	}
 	
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
-	public List<StudentVO> deleteStudent(@RequestBody String id) {
-		Integer schoolId = Integer.parseInt(id);
-		List<StudentVO> students = studentService.getAllStudentsBySchool(schoolId);
-		logger.info("UserDetailas :- " + id);
-		logger.info("Student infos are fetched...");
-		return students;
+	public ResultVO deleteStudent(@RequestBody String id) {
+		Integer studentId = Integer.parseInt(id);
+		studentService.deleteStudent(studentId);
+		ResultVO vo = new ResultVO();
+		vo.setMessge("student has been deleted sucessfully");
+		vo.setStatus(200);
+		return vo;
+		
 	}
 	
 	@RequestMapping(value = "/getAllStudents", method = RequestMethod.GET)

@@ -2,6 +2,7 @@ package com.yooyoo.serviceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,8 @@ public class StudentServiceImpl implements StudentService{
 
 	@Override
 	public void deleteStudent(int studentId) {
-		// TODO Auto-generated method stub
+		Optional<Student> student = studentRepository.findById(studentId);
+		studentRepository.delete(student.get());
 		
 	}
 
