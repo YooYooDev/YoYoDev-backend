@@ -37,7 +37,7 @@ public class School implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "school_id_seq")
 	@SequenceGenerator(name = "school_id_seq", sequenceName = "school_id_seq", allocationSize = 1)
-	int id;
+	long id;
 
 	@Column(name="name")
 	String name;
