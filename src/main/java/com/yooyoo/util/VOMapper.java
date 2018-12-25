@@ -1,11 +1,20 @@
 package com.yooyoo.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import com.yooyoo.model.Notifications;
 import com.yooyoo.model.School;
 import com.yooyoo.model.Student;
+import com.yooyoo.vo.NotificationsVO;
 import com.yooyoo.vo.SchoolInfo;
 import com.yooyoo.vo.StudentVO;
 
 public class VOMapper {
+	
+	static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+	
 	
 	public static Student getStudent(StudentVO studentVO){
 		Student student = new Student();
@@ -22,7 +31,11 @@ public class VOMapper {
 		student.setPassword("password");
 		student.setDeleted("N");
 		//new fields
-		student.setDob(studentVO.getDob());
+		try {
+			student.setDob(simpleDateFormat.parse(studentVO.getDob()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		student.setPhoto(studentVO.getPhoto());
 		student.setGender(studentVO.getGender());
 		student.setFatherName(studentVO.getFatherName());
@@ -68,7 +81,7 @@ public class VOMapper {
 		
 		//new fields
 		//new fields
-		studentVO.setDob(student.getDob());
+		studentVO.setDob(student.getDob()!= null?student.getDob().toString():"date");
 		studentVO.setPhoto(student.getPhoto());
 		studentVO.setGender(student.getGender());
 		studentVO.setFatherName(student.getFatherName());
@@ -79,6 +92,27 @@ public class VOMapper {
 		studentVO.setCity(student.getCity());
 		studentVO.setPinCode(student.getPinCode());
 		return studentVO;
+	}
+
+	public static Notifications getNotificationModel(NotificationsVO notificationVO) {
+		Notifications noti = new Notifications();
+		noti.setHeader(notificationVO.getHeader());
+		noti.setMessage(notificationVO.getMessage());
+		noti.setCreated_at(new Date());
+		noti.setUpdatedd_at(new Date());
+		return noti;
+	}
+
+	public static NotificationsVO getNotificationVO(Notifications not) {
+		NotificationsVO notVo = new NotificationsVO();
+		notVo.setId(not.getId());
+		notVo.setHeader(not.getHeader());
+		notVo.setMessage(not.getMessage());
+		notVo.setSchoolId(not.getSchool().getId());
+		notVo.setGradeId(not.getGrade().getId());
+		notVo.setStudentId(not.getStudent().getId());
+		notVo.setCreated_at(not.getCreated_at());
+		return notVo;
 	}
 
 }
