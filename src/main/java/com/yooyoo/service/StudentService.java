@@ -13,5 +13,7 @@ public interface StudentService {
 	public void deleteStudent(int studentId);
 	
 	public List<StudentVO> getAllStudentsBySchool(int schoolId);
+	
+	public List<StudentVO> getStudentsBySchoolAndClass(StudentVO studentVo);
 
 }

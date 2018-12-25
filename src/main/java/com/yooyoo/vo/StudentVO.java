@@ -28,6 +28,7 @@ public class StudentVO implements Serializable{
 	String lastName ;
 	String role;
     int schoolId;
+    int gradeId;
 	String primaryEmail;
 	String secondaryEmail;
 	String parentMobile1;
@@ -37,10 +38,9 @@ public class StudentVO implements Serializable{
 	Date updatedAt;
 	String deleted;
 	
-	Date dob;
+	String dob;
 	String photo;
 	String gender;
-	//String class
 	String fatherName;
 	String motherName;
 	String fatherProfession;

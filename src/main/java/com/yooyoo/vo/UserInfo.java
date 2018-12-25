@@ -27,10 +27,14 @@ public class UserInfo implements Serializable{
 	int id;
 	@XmlElement
 	String userName;
+	String fullName;
 	@XmlElement
 	String email;
 	@XmlElement
 	@JsonProperty("schoolInfo")
 	SchoolInfo school;
+	String mobile;
+	String location;
+	
 
 }

@@ -16,6 +16,8 @@ CREATE TABLE notifications(
 	header VARCHAR,
 	message TEXT,
 	school_id INTEGER REFERENCES school(id),
+	class_id INTEGER REFERENCES grade(id),
+	student_id INTEGER REFERENCES student(id),
 	created_at TIMESTAMP,
 	updatedd_at TIMESTAMP,
 	deleted VARCHAR,
@@ -50,7 +52,9 @@ CREATE TABLE attendance(
 	PRIMARY KEY (id)
 	);	
 		
-	
+ALTER TABLE cred_manager ADD COLUMN fullname VARCHAR;
+ALTER TABLE cred_manager ADD COLUMN mobile VARCHAR;
+ALTER TABLE cred_manager ADD COLUMN city VARCHAR;	
 	
 	
 	

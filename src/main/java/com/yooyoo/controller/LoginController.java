@@ -43,6 +43,9 @@ public class LoginController {
 		 UserInfo userInfo = new UserInfo();
 		 userInfo.setEmail(user.getEmail());
 		 userInfo.setUserName(user.getUser_name());
+		 userInfo.setFullName(user.getFullName());
+		 userInfo.setMobile(user.getMobile());
+		 userInfo.setLocation(user.getCity());
 		 SchoolInfo school = new SchoolInfo();
 		 school.setName(user.getSchool().getName());
 		 school.setEmailId(user.getSchool().getEmailId());

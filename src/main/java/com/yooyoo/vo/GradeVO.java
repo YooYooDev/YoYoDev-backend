@@ -1,8 +1,5 @@
 package com.yooyoo.vo;
 
-import java.util.Set;
-
-import com.yooyoo.model.Student;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -20,6 +17,4 @@ import lombok.Setter;
 public class GradeVO {
 	int id;
 	String name;
-	Set<Student> students;
-
 }

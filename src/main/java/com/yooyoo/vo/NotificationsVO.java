@@ -19,7 +19,9 @@ public class NotificationsVO {
 	private Integer id;
 	private String header;
 	private String message;
-	private SchoolInfo school;
+	private int  schoolId;
+	private int studentId;
+	private int gradeId;
 	private Date created_at;
 	private Date updatedd_at;
 	private String deleted;

@@ -1,5 +1,6 @@
 package com.yooyoo.model;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -9,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -64,5 +67,34 @@ public class Student {
 	@ManyToOne
 	@JoinColumn(name = "grade_id")
 	Grade grade;
+	
+	@PrePersist
+	@PreUpdate
+	public void auditTrail() {
+		final Date now = Calendar.getInstance().getTime();
+		if (created_at == null) {
+			setCreatedAt(now);
+		}
+		setUpdatedAt(now);
+	}
+	
+	/**
+	 * @param createdAt
+	 *            the createdAt to set
+	 */
+	public void setCreatedAt(final Date createdAt) {
+		this.created_at = (createdAt == null) ? Calendar.getInstance().getTime() : new Date(createdAt.getTime());
+	}
+
+	/**
+	 * @return the updatedAt
+	 */
+	/**
+	 * @param updatedAt
+	 *            the updatedAt to set
+	 */
+	public void setUpdatedAt(final Date updatedAt) {
+		this.updatedd_at = (updatedAt == null) ? Calendar.getInstance().getTime() : new Date(updatedAt.getTime());
+	}
 
 }
