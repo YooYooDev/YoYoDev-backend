@@ -2,15 +2,15 @@ package com.yooyoo.service;
 
 import java.util.List;
 
-import com.yooyoo.vo.NotificationsVO;
+import com.yooyoo.vo.TicketVO;
 
 public interface TicketsServise {
 	
-	public void saveTicket(NotificationsVO notificationVO);
+	public void saveTicket(TicketVO ticket);
 
-	public List<NotificationsVO> getAllTickets();
+	public List<TicketVO> getAllTickets();
 
-	public List<NotificationsVO> getAllTicketBySchool();
+	public List<TicketVO> getAllTicketBySchool();
 
 	public void deleteTickets(Integer id);
 

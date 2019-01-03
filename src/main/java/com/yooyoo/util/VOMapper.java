@@ -1,15 +1,23 @@
 package com.yooyoo.util;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.yooyoo.model.Grade;
 import com.yooyoo.model.Notifications;
 import com.yooyoo.model.School;
 import com.yooyoo.model.Student;
+import com.yooyoo.model.Ticket;
+import com.yooyoo.vo.GradeVO;
 import com.yooyoo.vo.NotificationsVO;
 import com.yooyoo.vo.SchoolInfo;
 import com.yooyoo.vo.StudentVO;
+import com.yooyoo.vo.TicketVO;
 
 public class VOMapper {
 	
@@ -31,11 +39,11 @@ public class VOMapper {
 		student.setPassword("password");
 		student.setDeleted("N");
 		//new fields
-		try {
+		/*try {
 			student.setDob(simpleDateFormat.parse(studentVO.getDob()));
 		} catch (ParseException e) {
 			e.printStackTrace();
-		}
+		}*/
 		student.setPhoto(studentVO.getPhoto());
 		student.setGender(studentVO.getGender());
 		student.setFatherName(studentVO.getFatherName());
@@ -63,7 +71,10 @@ public class VOMapper {
 		school.setEmailId(schoolVO.getEmailId());
 		school.setOwnerMobile(schoolVO.getOwnerMobile());
 		school.setOwnerName(schoolVO.getOwnerName());
-		return null;
+		school.setEnableAttendance(schoolVO.getEnableAttendance());
+		school.setEnableFees(schoolVO.getEnableFees());
+		school.setEnablePrintedWorksheet(schoolVO.getEnablePrintedWorksheet());
+		return school;
 	}
 
 	public static StudentVO getStudent(Student student){
@@ -91,6 +102,10 @@ public class VOMapper {
 		studentVO.setAddress(student.getAddress());
 		studentVO.setCity(student.getCity());
 		studentVO.setPinCode(student.getPinCode());
+		Grade grade = student.getGrade();
+		School school=student.getSchool();
+		studentVO.setGradeId(grade!=null?grade.getId():0);
+		studentVO.setSchoolId(school!=null?school.getId():0);
 		return studentVO;
 	}
 
@@ -115,4 +130,48 @@ public class VOMapper {
 		return notVo;
 	}
 
+	public static List<GradeVO> formatStudentsPerGrade(List<Student> students) {
+		List<Grade> grades=students.stream().map(student -> student.getGrade()).collect(Collectors.toList());
+		Set<Grade> gradess=new HashSet<>(grades);
+		List<GradeVO> gradeVOs = new ArrayList<>();
+		for(Grade grade:gradess){
+			GradeVO vo = new GradeVO();
+			List<StudentVO> studentsVos = new ArrayList<>();
+			List<Student> students1 =students.stream()               
+	                .filter(line ->line.getGrade().getName().equalsIgnoreCase(grade.getName()))     
+	                .collect(Collectors.toList()); 
+			for(Student student :students1){
+				StudentVO vo1 = new StudentVO();
+				vo1=VOMapper.getStudent(student);
+				studentsVos.add(vo1);
+			}
+			vo.setStudents(studentsVos);
+			vo.setId(grade.getId());
+			vo.setName(grade.getName());
+			gradeVOs.add(vo);
+		}
+		return gradeVOs;
+	}
+
+	public static Ticket getTicket(TicketVO ticket) {
+		Ticket schoolTicket = new Ticket();
+		schoolTicket.setId(ticket.getId());
+		schoolTicket.setSubject(ticket.getSubject());
+		schoolTicket.setMessage(ticket.getMessage());
+		schoolTicket.setResolution(ticket.getResolution());
+		schoolTicket.setDeleted("N");
+		return schoolTicket;
+	}
+
+	public static TicketVO getTicket(Ticket tkt) {
+		TicketVO vo = new TicketVO();
+		vo.setId(tkt.getId());
+		vo.setSubject(tkt.getSubject());
+		vo.setMessage(tkt.getMessage());
+		vo.setResolution(tkt.getResolution());
+		vo.setSchoolId(tkt.getSchoolId() != null?tkt.getSchoolId().getId():0);
+		return vo;
+	}
+
+	
 }

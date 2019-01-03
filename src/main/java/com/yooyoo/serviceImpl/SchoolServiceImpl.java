@@ -1,7 +1,8 @@
 package com.yooyoo.serviceImpl;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -9,10 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.yooyoo.controller.SchoolController;
 import com.yooyoo.model.School;
 import com.yooyoo.repository.SchoolRepository;
 import com.yooyoo.service.SchoolService;
+import com.yooyoo.util.VOMapper;
 import com.yooyoo.vo.SchoolInfo;
 
 @Service
@@ -20,27 +21,27 @@ public class SchoolServiceImpl implements SchoolService{
 
 	Logger logger = LoggerFactory.getLogger(SchoolServiceImpl.class);
 	@Autowired
-	public SchoolRepository schoolRepo;
+	public SchoolRepository schoolRepository;
 	
 	@Override
 	public void saveSchool(School school) {
-		schoolRepo.save(school);
+		schoolRepository.save(school);
 	}
 
 	@Override
-	public School editSchool(long id) {
-		School school=schoolRepo.findById(id);
-		logger.info("School Details "+school.getCode());
-		return school;
+	public School editSchool(int id) {
+		Optional<School> school=schoolRepository.findById(id);
+		logger.info("School Details "+school.get().getCode());
+		return null;
 	}
 
 	@Override
-	public boolean deleteSchool(long id) {
-		School school=schoolRepo.findById(id);
+	public boolean deleteSchool(int id) {
+		Optional<School> school=schoolRepository.findById(id);
 		boolean deleteStatus= false;
 		if(null!=school) {
 			//delete school
-			schoolRepo.delete(school);
+			schoolRepository.delete(school.get());
 			logger.info("School has been deleted ");
 			deleteStatus=true;
 		}else {
@@ -50,15 +51,32 @@ public class SchoolServiceImpl implements SchoolService{
 	}
 
 	@Override
-	public Set<School> loadSchool() {
+	public List<School> loadSchool() {
 		logger.info("load SchoolDB hit... ");
-		Set<School> schoolList= schoolRepo.getAllSchool();
-		/*Set<School> schoolList = new HashSet<School>();
-		for (School schl : schoolRepo.findAll()) {
-			schoolList.add(schl);
+		Set<School> schoolList= schoolRepository.getAllSchool();
+		List<School> schools = new ArrayList<School>();
+		for (School schl : schoolList) {
+			schools.add(schl);
 			logger.info("school details from db "+schl.getId());
-		}*/
-		return schoolList;
+		}
+		return schools;
+	}
+
+	@Override
+	public School getSchoolById(int id) {
+		Optional<School> school = schoolRepository.findById(id);
+		return school.get();
+	}
+
+	@Override
+	public void uploadSchoolCsv(List<SchoolInfo> schools) {
+		if(schools !=null && !schools.isEmpty()){
+			for(SchoolInfo school: schools){
+				School csvSchool = VOMapper.getSchool(school);
+				saveSchool(csvSchool);
+			}
+		}
+		
 	}
 
 }

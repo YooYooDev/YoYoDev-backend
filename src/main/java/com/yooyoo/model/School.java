@@ -1,6 +1,7 @@
 package com.yooyoo.model;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 
@@ -10,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -37,7 +40,7 @@ public class School implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "school_id_seq")
 	@SequenceGenerator(name = "school_id_seq", sequenceName = "school_id_seq", allocationSize = 1)
-	long id;
+	Integer id;
 
 	@Column(name="name")
 	String name;
@@ -98,5 +101,35 @@ public class School implements Serializable{
 	
 	@OneToMany
 	Set<Student> students;
+	
+	@PrePersist
+	@PreUpdate
+	public void auditTrail() {
+		final Date now = Calendar.getInstance().getTime();
+		if (createdAt == null) {
+			setCreatedAt(now);
+		}
+		setUpdatedAt(now);
+	}
+	
+	/**
+	 * @param createdAt
+	 *            the createdAt to set
+	 */
+	public void setCreatedAt(final Date createdAt) {
+		this.createdAt = (createdAt == null) ? Calendar.getInstance().getTime() : new Date(createdAt.getTime());
+	}
+
+	/**
+	 * @return the updatedAt
+	 */
+	/**
+	 * @param updatedAt
+	 *            the updatedAt to set
+	 */
+	public void setUpdatedAt(final Date updatedAt) {
+		this.updatedAt = (updatedAt == null) ? Calendar.getInstance().getTime() : new Date(updatedAt.getTime());
+	}
+
 
 }

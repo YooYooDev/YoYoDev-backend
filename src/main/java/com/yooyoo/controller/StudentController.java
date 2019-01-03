@@ -7,13 +7,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.yooyoo.service.StudentService;
+import com.yooyoo.util.FileUtils;
+import com.yooyoo.vo.GradeVO;
 import com.yooyoo.vo.ResultVO;
 import com.yooyoo.vo.StudentVO;
 
@@ -45,10 +52,9 @@ public class StudentController {
 		return vo;
 	}
 	
-	@RequestMapping(value = "/delete", method = RequestMethod.GET)
-	public ResultVO deleteStudent(@RequestBody String id) {
-		Integer studentId = Integer.parseInt(id);
-		studentService.deleteStudent(studentId);
+	@DeleteMapping("/delete/{id}")
+	public ResultVO deleteStudent(@PathVariable("id") int id) {
+		studentService.deleteStudent(id);
 		ResultVO vo = new ResultVO();
 		vo.setMessge("student has been deleted sucessfully");
 		vo.setStatus(200);
@@ -56,11 +62,10 @@ public class StudentController {
 		
 	}
 	
-	@RequestMapping(value = "/getAllStudents", method = RequestMethod.GET)
-	public List<StudentVO> getAllStudentBySchool(@RequestBody String id) {
-		Integer schoolId = Integer.parseInt(id);
+	@GetMapping("/getAllStudents/{schoolId}")
+	public List<StudentVO> getAllStudentBySchool(@PathVariable("schoolId") int schoolId) {
 		List<StudentVO> students = studentService.getAllStudentsBySchool(schoolId);
-		logger.info("UserDetailas :- " + id);
+		logger.info("UserDetailas :- " + schoolId);
 		logger.info("Student infos are fetched...");
 		return students;
 	}
@@ -79,5 +84,45 @@ public class StudentController {
 		}
 		return new ResponseEntity<>(students, HttpStatus.OK);
 	}
+	
+	@GetMapping("/getStudentsBySchool/{id}")
+	public ResponseEntity<List<GradeVO>> getStudentsBySchoolANdClass(@PathVariable("id")int id) {
+		logger.info("Student with class Method hit ");
+		List<GradeVO> grades = null;
+		try {
+			grades = studentService.getStudentsBySchoolAndGrade(id);
+		} catch (Exception e) {
+			logger.debug("Error While getting  the students Details");
+			logger.error("Error While getting  the students Details"+e.getStackTrace());
+			return new ResponseEntity<>(grades, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(grades, HttpStatus.OK);
+	}
+	
 
+	@PostMapping("/uploadStudents/{schoolId}")
+	public ResponseEntity<ResultVO> uploadStudents(@PathVariable("schoolId") final int id,
+			@RequestParam("file") final MultipartFile csvFile) {
+		logger.info("Student with class Method hit ");
+		ResultVO result =  new ResultVO();
+		try {
+			String file = csvFile.getOriginalFilename();
+			if("csv".equalsIgnoreCase(FileUtils.checkFileExtension(file))){
+			List<StudentVO> students = FileUtils.readAllDataAtOnce(csvFile,id);
+			studentService.uploadUserCsv(students);
+			result.setMessge("students uplocaded sucessFully");
+			result.setStatus(200);
+			}else{
+				result.setMessge("Invalid file format. Please upload .csv files");
+				result.setStatus(400);
+			}
+		} catch (Exception e) {
+			result.setMessge("students upload operation failed..");
+			result.setStatus(500);
+			logger.debug("Error While getting  the students Details");
+			logger.error("Error While getting  the students Details" + e.getStackTrace());
+			return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 }

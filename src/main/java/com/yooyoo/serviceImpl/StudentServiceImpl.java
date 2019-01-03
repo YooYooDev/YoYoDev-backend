@@ -2,10 +2,12 @@ package com.yooyoo.serviceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.yooyoo.model.Grade;
 import com.yooyoo.model.School;
@@ -15,6 +17,7 @@ import com.yooyoo.repository.SchoolRepository;
 import com.yooyoo.repository.StudentRepository;
 import com.yooyoo.service.StudentService;
 import com.yooyoo.util.VOMapper;
+import com.yooyoo.vo.GradeVO;
 import com.yooyoo.vo.StudentVO;
 
 @Service
@@ -32,9 +35,9 @@ public class StudentServiceImpl implements StudentService{
 	public void saveStudent(StudentVO student) {
 		
 		Student s = VOMapper.getStudent(student);
-		School school = schoolRepository.findById(student.getSchoolId());
+		Optional<School> school = schoolRepository.findById(student.getSchoolId());
 		Grade grade = gradeRepository.findById(student.getGradeId());
-		s.setSchool(school);
+		s.setSchool(school.get());
 		s.setGrade(grade);
 		studentRepository.save(s);
 	}
@@ -76,6 +79,31 @@ public class StudentServiceImpl implements StudentService{
 			studentsVos.add(vo);
 		}
 		return studentsVos;
+	}
+
+	@Override
+	public List<GradeVO> getStudentsBySchoolAndGrade(int schoolId) {
+		Set<Student> students = studentRepository.getStudentsBySchool(schoolId);
+		List<GradeVO> grades = new ArrayList<>();
+		grades=VOMapper.formatStudentsPerGrade(new ArrayList<Student>(students));
+		return grades;
+	}
+
+	@Transactional
+	@Override
+	public Boolean uploadUserCsv(List<StudentVO> students) {
+		boolean status = false;
+		try{
+			if(students != null && !students.isEmpty()){
+				for(StudentVO student:students){
+					saveStudent(student);
+				}
+				status = true;
+			}
+		}catch(Exception e){
+			status = false;
+		}
+		return status;
 	}
 
 }

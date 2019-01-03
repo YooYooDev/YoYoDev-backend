@@ -3,6 +3,7 @@ package com.yooyoo.serviceImpl;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +36,12 @@ public class NotificationServiceImpl implements NotificationService{
 
 	@Override
 	public void saveNotification(NotificationsVO notificationVO) {
-		School school = schoolRepository.findById(notificationVO.getSchoolId());
+		//Long schoolId = Long.valueOf(notificationVO.getSchoolId());
+		Optional<School> school = schoolRepository.findById(notificationVO.getSchoolId());
 		Student student = studentRepository.findById(notificationVO.getStudentId());
 		Grade grade = gradeRepository.findById(notificationVO.getGradeId());
 		Notifications notification = VOMapper.getNotificationModel(notificationVO);
-		notification.setSchool(school);
+		notification.setSchool(school.get());
 		notification.setGrade(grade);
 		notification.setStudent(student);
 		repository.save(notification);
