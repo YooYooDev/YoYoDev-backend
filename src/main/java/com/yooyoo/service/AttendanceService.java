@@ -1,5 +1,8 @@
 package com.yooyoo.service;
 
-public interface AttendanceService {
+import com.yooyoo.vo.AttendanceDTO;
+import com.yooyoo.vo.AttendanceVO;
 
+public interface AttendanceService {
+	boolean save(AttendanceDTO attendance);
 }
