@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.yooyoo.service.AttendanceService;
 import com.yooyoo.vo.AttendanceVO;
 
@@ -27,6 +26,7 @@ public class AttendanceController {
 	private AttendanceService attendanceService; 
 	
 	@PostMapping("/save")
+
 	public ResponseEntity<Boolean> saveAttendance(@RequestBody AttendanceVO attendance) {
 		logger.info("Save saveAttendance Method hit "+attendance.getSchoolId());
 		try {

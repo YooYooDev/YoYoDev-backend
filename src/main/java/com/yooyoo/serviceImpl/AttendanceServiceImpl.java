@@ -38,7 +38,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 		for (StudentDTO student : attendanceDetails.getStudentList()) {
 			if (null != student) {
 				Attendance attendance = new Attendance();
-				if(attendanceDetails.getId() != null){
+				if (attendanceDetails.getId() != null) {
 					attendance.setId(attendanceDetails.getId());
 				}
 				Grade grade = new Grade();
