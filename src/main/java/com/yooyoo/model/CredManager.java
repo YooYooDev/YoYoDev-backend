@@ -6,9 +6,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -36,7 +38,8 @@ public class CredManager implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cred_manager_id_seq")
+	@SequenceGenerator(name = "cred_manager_id_seq", sequenceName = "cred_manager_id_seq", allocationSize = 1)
 	int id;
 	@Column(name = "user_name")
 	String user_name;
@@ -54,4 +57,5 @@ public class CredManager implements Serializable{
 	String fullName;
 	String mobile;
 	String city;
+	String active;
 }

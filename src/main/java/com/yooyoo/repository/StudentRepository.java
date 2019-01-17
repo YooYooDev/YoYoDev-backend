@@ -2,8 +2,6 @@ package com.yooyoo.repository;
 
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -15,7 +13,7 @@ import com.yooyoo.model.Student;
 public interface StudentRepository extends CrudRepository<Student, Integer>{
 	
 	
-	public static String GET_STUDENTS_BY_SCHOOL = "select s from Student s where s.school.id = :schoolId ";
+	public static String GET_STUDENTS_BY_SCHOOL = "select s from Student s where s.school.id = :schoolId ORDER BY updatedd_at DESC";
 	
 	public static String GET_STUDENTS_BY_SCHOOL_AND_GRADE = "select s from Student s where"
 			                         + " s.school.id = :schoolId and s.grade.id = :gradeId";

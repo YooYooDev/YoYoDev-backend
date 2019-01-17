@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.yooyoo.exception.ResourceNotFoundException;
 import com.yooyoo.model.Grade;
 import com.yooyoo.model.School;
 import com.yooyoo.model.Student;
@@ -35,11 +36,17 @@ public class StudentServiceImpl implements StudentService{
 	public void saveStudent(StudentVO student) {
 		
 		Student s = VOMapper.getStudent(student);
-		Optional<School> school = schoolRepository.findById(student.getSchoolId());
+		Optional<School> schoolOpt = schoolRepository.findById(student.getSchoolId());
 		Grade grade = gradeRepository.findById(student.getGradeId());
-		s.setSchool(school.get());
-		s.setGrade(grade);
-		studentRepository.save(s);
+		School school = schoolOpt.get();
+		
+		if(grade != null && school != null){
+			s.setSchool(school);
+			s.setGrade(grade);
+			studentRepository.save(s);
+		}else{
+			throw new ResourceNotFoundException("Invalid School Or Grade values");
+		}
 	}
 
 	@Override
@@ -51,7 +58,8 @@ public class StudentServiceImpl implements StudentService{
 	@Override
 	public void deleteStudent(int studentId) {
 		Student student = studentRepository.findById(studentId);
-		studentRepository.delete(student);
+		student.setDeleted("Y");
+		studentRepository.save(student);
 		
 	}
 

@@ -41,7 +41,9 @@ public class SchoolServiceImpl implements SchoolService{
 		boolean deleteStatus= false;
 		if(null!=school) {
 			//delete school
-			schoolRepository.delete(school.get());
+			School sch= school.get();
+			sch.setActive(0);
+			schoolRepository.save(sch);
 			logger.info("School has been deleted ");
 			deleteStatus=true;
 		}else {

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +28,20 @@ public class NotificationController {
 	
 	@PostMapping("/save")
 	public ResponseEntity<Boolean> saveNotification(@RequestBody NotificationsVO notification) {
+		logger.info("notification header Method hit "+notification.getHeader());
+		
+		try {
+			service.saveNotification(notification);
+		} catch (Exception e) {
+			logger.debug("Error While Save Save the notification Details");
+			logger.error("Error While Save Save the notification Details"+e.getStackTrace());
+			return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+	
+	@PutMapping("/update")
+	public ResponseEntity<Boolean> updateNotification(@RequestBody NotificationsVO notification) {
 		logger.info("notification header Method hit "+notification.getHeader());
 		
 		try {

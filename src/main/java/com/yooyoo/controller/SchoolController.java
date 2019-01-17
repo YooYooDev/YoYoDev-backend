@@ -22,7 +22,6 @@ import com.yooyoo.service.SchoolService;
 import com.yooyoo.util.FileUtils;
 import com.yooyoo.vo.ResultVO;
 import com.yooyoo.vo.SchoolInfo;
-import com.yooyoo.vo.StudentVO;
 
 @RestController
 @RequestMapping(value = { "/schools" })

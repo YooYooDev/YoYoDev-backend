@@ -54,10 +54,16 @@ public class Fees {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "school_id")
-	private School schoolId;
+	private School school;
 	
 	Date created_at;
 	Date updatedd_at;
 	String deleted ;
+	
+	private byte[] image1;
+	private Byte[] image2;
+	private Byte[] image3;
+	private Byte[] image4;
+	private Byte[] image5;
 
 }

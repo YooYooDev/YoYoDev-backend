@@ -107,7 +107,7 @@ public class StudentController {
 		ResultVO result =  new ResultVO();
 		try {
 			String file = csvFile.getOriginalFilename();
-			if("csv".equalsIgnoreCase(FileUtils.checkFileExtension(file))){
+			if(".csv".equalsIgnoreCase(FileUtils.checkFileExtension(file))){
 			List<StudentVO> students = FileUtils.readAllDataAtOnce(csvFile,id);
 			studentService.uploadUserCsv(students);
 			result.setMessge("students uplocaded sucessFully");

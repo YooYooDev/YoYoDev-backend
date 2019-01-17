@@ -1,7 +1,5 @@
 package com.yooyoo.vo;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -15,14 +13,9 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode
-public class AttendanceVO {
-	private Integer id;
-	private Integer studentId;
-	private Integer schoolId;
-	private Integer grade;
-	private String date;
-	private String studentName;
-	private int status;
-    private List<StudentDTO> studentList;
+public class StudentDTO {
 
+	private Integer studentId;
+	private boolean attendanceStatus;
+	
 }

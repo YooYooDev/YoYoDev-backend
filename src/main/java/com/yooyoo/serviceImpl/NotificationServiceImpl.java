@@ -36,7 +36,6 @@ public class NotificationServiceImpl implements NotificationService{
 
 	@Override
 	public void saveNotification(NotificationsVO notificationVO) {
-		//Long schoolId = Long.valueOf(notificationVO.getSchoolId());
 		Optional<School> school = schoolRepository.findById(notificationVO.getSchoolId());
 		Student student = studentRepository.findById(notificationVO.getStudentId());
 		Grade grade = gradeRepository.findById(notificationVO.getGradeId());

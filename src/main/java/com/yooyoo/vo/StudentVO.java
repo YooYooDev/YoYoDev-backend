@@ -5,7 +5,6 @@ import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,8 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-@EqualsAndHashCode
-public class StudentVO implements Serializable{
+public class StudentVO extends BasicVO implements Serializable{
 
 	/**
 	 * 
@@ -36,7 +34,7 @@ public class StudentVO implements Serializable{
 	String password;
 	Date createdAt;
 	Date updatedAt;
-	String deleted;
+	int deleted;
 	
 	String dob;
 	String photo;
@@ -49,5 +47,6 @@ public class StudentVO implements Serializable{
 	String city;
 	String state;
 	String pinCode;
+	String gradeName;
 
 }

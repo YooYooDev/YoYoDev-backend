@@ -1,5 +1,7 @@
 package com.yooyoo.repository;
 
+import java.util.Set;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -12,5 +14,9 @@ public interface CredManagerRepository extends CrudRepository<CredManager, Integ
 	public static String GET_USER_DETAILS = "select c from CredManager c where c.email = :email and c.password = :password ";
 	@Query(GET_USER_DETAILS)
 	public CredManager getUserDetails(@Param("email") String email, @Param("password") String password);
+	
+	
+	@Query("select c from CredManager AS c")
+	public Set<CredManager> getAllCreds();
 
 }

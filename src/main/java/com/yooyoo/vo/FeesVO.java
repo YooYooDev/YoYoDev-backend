@@ -1,5 +1,6 @@
 package com.yooyoo.vo;
 
+import java.io.File;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
@@ -18,13 +19,16 @@ import lombok.Setter;
 public class FeesVO {
 	private Integer id;
 	private String studentName;
-	private StudentVO student ;
+	private int studentId ;
 	private Float totalBillAmount;
 	private Float paidBillAmount;
 	private Float pendingAmount;
-	private SchoolInfo school;
+	private int schoolId;
 	private Date created_at;
 	private Date updatedd_at;
-	private String deleted ;
+	private int deleted ;
+	private String gradeName ;
+	private byte[] image1;
+	
 
 }
