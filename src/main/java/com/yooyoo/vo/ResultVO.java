@@ -1,6 +1,7 @@
 package com.yooyoo.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +21,8 @@ public class ResultVO implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String messge;
+	private List<String> messge;
+	private String message;
 	private int status;
 	
 }

@@ -33,30 +33,31 @@ public class SchoolController {
 	public SchoolService schoolService;
 	
 	@PostMapping("/save")
-	public ResponseEntity<Boolean> saveSchool(@RequestBody School school) {
-		logger.info("Save School Method hit "+school.getEmailId());
-		
+	public ResponseEntity<ResultVO> saveSchool(@RequestBody School school) {
+		logger.info("Save School Method hit " + school.getEmailId());
+		ResultVO vo = null;
 		try {
-			schoolService.saveSchool(school);
+			vo = schoolService.saveSchool(school);
 		} catch (Exception e) {
 			logger.debug("Error While Save Save the School Details");
-			logger.error("Error While Save Save the School Details"+e.getStackTrace());
-			return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+			logger.error("Error While Save Save the School Details" + e.getStackTrace());
+			return new ResponseEntity<>(vo, HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<>(true, HttpStatus.OK);
+		return new ResponseEntity<>(vo, HttpStatus.OK);
 	}
 
 	@PostMapping("/edit")
-	public ResponseEntity<Boolean> editSchool(@RequestBody School school) {
+	public ResponseEntity<ResultVO> editSchool(@RequestBody School school) {
 		logger.info("Edit School Method hit ");
+		ResultVO vo = null;
 		try {
-			schoolService.saveSchool(school);
+			vo = schoolService.editSchool(school);
 		} catch (Exception e) {
 			logger.debug("Error While Edit   School Details");
 			logger.error("Error While Edit   School Details"+e.getStackTrace());
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(vo, HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<>(true, HttpStatus.OK);
+		return new ResponseEntity<>(vo, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/delete/{id}")
@@ -111,14 +112,14 @@ public class SchoolController {
 			if(".csv".equalsIgnoreCase(FileUtils.checkFileExtension(file))){
 			List<SchoolInfo> schools = FileUtils.readAllDataAtOnceForSchool(csvFile);
 			schoolService.uploadSchoolCsv(schools);
-			result.setMessge("students uplocaded sucessFully");
+			result.setMessage("students uplocaded sucessFully");
 			result.setStatus(200);
 			}else{
-				result.setMessge("Invalid file format. Please upload .csv files");
+				result.setMessage("Invalid file format. Please upload .csv files");
 				result.setStatus(400);
 			}
 		} catch (Exception e) {
-			result.setMessge("students upload operation failed..");
+			result.setMessage("students upload operation failed..");
 			result.setStatus(500);
 			logger.debug("Error While getting  the students Details");
 			logger.error("Error While getting  the students Details" + e.getStackTrace());

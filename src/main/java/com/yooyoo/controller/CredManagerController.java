@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yooyoo.service.CredService;
 import com.yooyoo.vo.CredManagerVO;
+import com.yooyoo.vo.ResultVO;
 
 @RestController
 @RequestMapping(value = { "/cred" })
@@ -55,15 +56,16 @@ public class CredManagerController {
 	}
 	
 	@PostMapping("/delete/{id}")
-	public ResponseEntity<Boolean> deleteCredManager(@PathVariable("id") int id) {
+	public ResponseEntity<ResultVO> deleteCredManager(@PathVariable("id") int id) {
+		ResultVO vo = null;
 		try {
-			service.deleteCredManager(id);
+			vo = service.deleteCredManager(id);
 		} catch (Exception e) {
 			logger.debug("Error While delete Save the Cred Details");
 			logger.error("Error While delete Save the Cred Details"+e.getStackTrace());
-			return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(vo, HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<>(true, HttpStatus.OK);
+		return new ResponseEntity<>(vo, HttpStatus.OK);
 	}
 	
 	@GetMapping("/load/{id}")

@@ -34,21 +34,17 @@ public class StudentController {
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public ResultVO createStudent(@RequestBody StudentVO student) {
-        studentService.saveStudent(student);
+		ResultVO vo = null;
+		vo  = studentService.saveStudent(student);
         logger.info("UserDetailas :- "+student);
-        ResultVO vo = new ResultVO();
-	     vo.setMessge("student created sucessfully"); 
-	     vo.setStatus(200);
 	     return vo;
 	}
 	
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public ResultVO updateStudent(@RequestBody StudentVO student) {
-		studentService.saveStudent(student);
 		logger.info("UserDetailas :- " + student);
-		ResultVO vo = new ResultVO();
-		vo.setMessge("student updated sucessfully");
-		vo.setStatus(200);
+		ResultVO vo =null;
+		vo = studentService.updateStudent(student);
 		return vo;
 	}
 	
@@ -56,7 +52,8 @@ public class StudentController {
 	public ResultVO deleteStudent(@PathVariable("id") int id) {
 		studentService.deleteStudent(id);
 		ResultVO vo = new ResultVO();
-		vo.setMessge("student has been deleted sucessfully");
+		String message = "student has been deleted sucessfully";
+		vo.getMessge().add(message);
 		vo.setStatus(200);
 		return vo;
 		
@@ -110,14 +107,14 @@ public class StudentController {
 			if(".csv".equalsIgnoreCase(FileUtils.checkFileExtension(file))){
 			List<StudentVO> students = FileUtils.readAllDataAtOnce(csvFile,id);
 			studentService.uploadUserCsv(students);
-			result.setMessge("students uplocaded sucessFully");
+			result.setMessage("students uplocaded sucessFully");
 			result.setStatus(200);
 			}else{
-				result.setMessge("Invalid file format. Please upload .csv files");
+				result.setMessage("Invalid file format. Please upload .csv files");
 				result.setStatus(400);
 			}
 		} catch (Exception e) {
-			result.setMessge("students upload operation failed..");
+			result.setMessage("students upload operation failed..");
 			result.setStatus(500);
 			logger.debug("Error While getting  the students Details");
 			logger.error("Error While getting  the students Details" + e.getStackTrace());

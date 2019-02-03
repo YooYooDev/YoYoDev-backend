@@ -2,13 +2,14 @@ package com.yooyoo.service;
 
 import java.util.List;
 import com.yooyoo.model.School;
+import com.yooyoo.vo.ResultVO;
 import com.yooyoo.vo.SchoolInfo;
 
 public interface SchoolService {
 
-	public void saveSchool(School school);
+	public ResultVO saveSchool(School school);
 
-	public School editSchool(int id);
+	public ResultVO editSchool(School school);
 
 	public boolean deleteSchool(int id);
 

@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class StudentVO extends BasicVO implements Serializable{
+public class StudentVO implements Serializable{
 
 	/**
 	 * 

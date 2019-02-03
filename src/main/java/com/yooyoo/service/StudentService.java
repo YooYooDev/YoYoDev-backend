@@ -3,13 +3,14 @@ package com.yooyoo.service;
 import java.util.List;
 
 import com.yooyoo.vo.GradeVO;
+import com.yooyoo.vo.ResultVO;
 import com.yooyoo.vo.StudentVO;
 
 public interface StudentService {
 	
-	public void saveStudent(StudentVO student);
+	public ResultVO saveStudent(StudentVO student);
 	
-	public StudentVO updateStudent(StudentVO student);
+	public ResultVO updateStudent(StudentVO student);
 	
 	public void deleteStudent(int studentId);
 	

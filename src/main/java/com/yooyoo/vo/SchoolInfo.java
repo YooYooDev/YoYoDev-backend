@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class SchoolInfo extends BasicVO{
+public class SchoolInfo  {
 	@XmlElement
 	int id;
 	@XmlElement

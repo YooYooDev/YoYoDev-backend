@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import com.yooyoo.model.School;
 import com.yooyoo.repository.SchoolRepository;
 import com.yooyoo.service.SchoolService;
+import com.yooyoo.util.FileUtils;
 import com.yooyoo.util.VOMapper;
+import com.yooyoo.vo.ResultVO;
 import com.yooyoo.vo.SchoolInfo;
 
 @Service
@@ -24,15 +26,51 @@ public class SchoolServiceImpl implements SchoolService{
 	public SchoolRepository schoolRepository;
 	
 	@Override
-	public void saveSchool(School school) {
+	public ResultVO saveSchool(School school) {
+		ResultVO vo = new ResultVO();
+		if(!isSchoolExists(school)){
+		school.setCode(FileUtils.gen());	
 		schoolRepository.save(school);
+		vo.setStatus(200);
+		vo.setMessage("School saved sucessfully..");
+		}else{
+			logger.info("school exists with name :"+school.getName());
+			vo.setStatus(400);
+			vo.setMessage("school exists with name :"+school.getName());
+		}
+		return vo;
+	}
+
+	private boolean isSchoolExists(School school) {
+		boolean isSchoolExists = false;
+		List<School> sch = schoolRepository.findSchoolByName(school.getName(), school.getRegistrationName());
+		if (sch != null && !sch.isEmpty()) {
+			isSchoolExists = true;
+		}
+		return isSchoolExists;
 	}
 
 	@Override
-	public School editSchool(int id) {
-		Optional<School> school=schoolRepository.findById(id);
-		logger.info("School Details "+school.get().getCode());
-		return null;
+	public ResultVO editSchool(School school) {
+		ResultVO vo = new ResultVO();
+		List<School> sch = schoolRepository.findSchoolByName(school.getName(), school.getRegistrationName());
+		if (sch != null && !sch.isEmpty()) {
+			School s  = sch.get(0);
+			if(s.getId() == school.getId()){
+				schoolRepository.save(school);
+				vo.setStatus(200);
+				vo.setMessage("School updated sucessfully..");
+			}else{
+				logger.info("school exists with name :"+school.getName());
+				vo.setStatus(400);
+				vo.setMessage("Modify school name or registration no:"+school.getName());
+			}
+		}else{
+			schoolRepository.save(school);
+			vo.setStatus(200);
+			vo.setMessage("School updated sucessfully..");
+		}
+		return vo;
 	}
 
 	@Override

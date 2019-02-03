@@ -3,16 +3,17 @@ package com.yooyoo.service;
 import java.util.List;
 
 import com.yooyoo.vo.CredManagerVO;
+import com.yooyoo.vo.ResultVO;
 
 public interface CredService {
 	
-	public void save(CredManagerVO credVo);
+	public ResultVO save(CredManagerVO credVo);
 	
 	public void update(CredManagerVO credVo);
 	
 	public CredManagerVO getCredManager(int id);
 	
-	public void deleteCredManager(int id);
+	public ResultVO deleteCredManager(int id);
 	
 	public List<CredManagerVO> getAllCredManager();
 	

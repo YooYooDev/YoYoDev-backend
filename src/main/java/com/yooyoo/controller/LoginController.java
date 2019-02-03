@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yooyoo.model.CredManager;
 import com.yooyoo.service.LoginService;
+import com.yooyoo.vo.LoginVO;
 import com.yooyoo.vo.Profile;
 import com.yooyoo.vo.SchoolInfo;
 import com.yooyoo.vo.UserInfo;
@@ -63,6 +64,14 @@ public class LoginController {
 		 p.setUserInfo(userInfo);
 		 return p;
 	 }
+	 
+	 @RequestMapping(value = "/yooyoo/android/login", method = RequestMethod.POST)
+	 public Profile loginMobileUser(@RequestBody LoginVO userForm) {
+		 Profile profile = loginService.authenticateMobileUser(userForm);
+	        logger.info("UserDetails for mobile  :- "+profile);
+		    return profile;  
+		}
+
 
 }
 
