@@ -55,6 +55,7 @@ public class LoginServiceImpl implements LoginService {
 		School school = schoolRepo.findByCode(schoolCode);
 		String mobileNo = loginVO.getMobileNo();
 		String password = loginVO.getPassword();
+		if(school != null){
 		List<Student> students = studentRepo.getStudentDetailsBySchoolMobileAndPassword(school.getId(), password,
 				mobileNo);
 		if (students != null && !students.isEmpty()) {
@@ -77,6 +78,10 @@ public class LoginServiceImpl implements LoginService {
 			profile.setMessage("User Loggedin Sucessfully...");
 		} else {
 			profile.setMessage("User not found with given credentials");
+			profile.setStatus(404);
+		}
+		}else{
+			profile.setMessage("School not found with given credentials");
 			profile.setStatus(404);
 		}
 

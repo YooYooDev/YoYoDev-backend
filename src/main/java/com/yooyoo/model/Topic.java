@@ -1,8 +1,6 @@
 package com.yooyoo.model;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -15,14 +13,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.yooyoo.model.Attendance.AttendanceBuilder;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -36,6 +31,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Topic {
@@ -64,14 +60,14 @@ public class Topic {
 	@JoinColumn(name="topic_id")
 	private Set<Worksheet> worksheetLinks;
 	
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "topic_subject",
         joinColumns = @JoinColumn(name = "topic_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "subject_id", referencedColumnName = "id"))
     private Set<Subject> subjects;
 	
 	
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "topic_catagory",
         joinColumns = @JoinColumn(name = "topic_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"))

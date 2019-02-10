@@ -10,12 +10,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.yooyoo.model.Video.VideoBuilder;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
@@ -24,6 +23,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Worksheet {
