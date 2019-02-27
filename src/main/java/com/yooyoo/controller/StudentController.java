@@ -56,7 +56,6 @@ public class StudentController {
 		vo.getMessge().add(message);
 		vo.setStatus(200);
 		return vo;
-		
 	}
 	
 	@GetMapping("/getAllStudents/{schoolId}")

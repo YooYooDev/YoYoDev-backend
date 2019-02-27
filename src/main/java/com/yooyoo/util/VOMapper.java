@@ -259,6 +259,11 @@ public class VOMapper {
 		fee.setImage1(image);
 		return fee;
 	}
-
+/*
+	public static Assignment getAssignment(AssignmentVO assignmentVO) {
+		Assignment assignment = new Assignment();
+		return null;
+	}
+*/
 	
 }

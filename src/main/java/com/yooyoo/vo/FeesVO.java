@@ -1,6 +1,5 @@
 package com.yooyoo.vo;
 
-import java.io.File;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;

@@ -1,21 +1,15 @@
 package com.yooyoo.model;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.yooyoo.model.Subject.SubjectBuilder;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -47,6 +41,4 @@ public class Category {
 	@Column(name="updated_date")
 	Date updatedDate;
 	
-	@ManyToMany(mappedBy = "categories")
-    private Set<Topic> topics = new HashSet<>();
 }

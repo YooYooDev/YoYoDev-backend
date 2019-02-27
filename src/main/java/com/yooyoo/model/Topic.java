@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -25,6 +26,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@SuppressWarnings("unused")
 @Entity
 @Table(name = "topic")
 @Getter
@@ -48,30 +50,32 @@ public class Topic {
 	@Column(name="updated_date")
 	private Date updatedDate;
 
-	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name="topic_id")
-	private Set<Video> videoLinks;
+	@Column(name="videoLink")
+	private String videoLink;
 	
-	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name="topic_id")
-	private Set<Quiz> quizLinks;
+	@Column(name="quizLink")
+	private String quizLink;
 	
-	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name="topic_id")
-	private Set<Worksheet> worksheetLinks;
+	@Column(name="worksheetLink")
+	private String worksheetLink;
 	
-	@ManyToMany(cascade = CascadeType.MERGE)
-    @JoinTable(name = "topic_subject",
+	
+	@ManyToOne
+	@JoinColumn(name = "subject_id")
+    private Subject subjects;
+	
+	
+	@ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.MERGE)
+    /*@JoinTable(name = "topic_catagory",
         joinColumns = @JoinColumn(name = "topic_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "subject_id", referencedColumnName = "id"))
-    private Set<Subject> subjects;
+        inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"))*/
 	
-	
-	@ManyToMany(cascade = CascadeType.MERGE)
-    @JoinTable(name = "topic_catagory",
-        joinColumns = @JoinColumn(name = "topic_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"))
+	@JoinTable(name = "topic_catagory", joinColumns = {
+			@JoinColumn(name = "topic_id") }, inverseJoinColumns = {
+					@JoinColumn(name = "category_id") })
     private Set<Category> categories;
+	
+	
 	
 	
 	

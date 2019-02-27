@@ -1,9 +1,6 @@
 package com.yooyoo.vo;
 
-import java.util.Date;
 import java.util.List;
-
-import com.yooyoo.vo.AttendanceVO.AttendanceVOBuilder;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

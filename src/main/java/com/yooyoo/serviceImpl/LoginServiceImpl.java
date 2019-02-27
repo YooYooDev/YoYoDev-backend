@@ -58,25 +58,31 @@ public class LoginServiceImpl implements LoginService {
 		if(school != null){
 		List<Student> students = studentRepo.getStudentDetailsBySchoolMobileAndPassword(school.getId(), password,
 				mobileNo);
-		if (students != null && !students.isEmpty()) {
-			String sessionId = UUID.randomUUID().toString();
-			profile.setSchool(school);
-			List<StudentVO> studentsVos = new ArrayList<>();
-			for (Student student : students) {
-				SessionManager manager = new SessionManager();
-				manager.setSessionId(sessionId);
-				manager.setUserId(student.getId());
-				manager.setSource("mobile");
-				sessionRepo.save(manager);
-				StudentVO vo = new StudentVO();
-				vo = VOMapper.getStudent(student);
-				studentsVos.add(vo);
-			}
-			profile.setAccessToken(sessionId);
-			profile.setStudents(studentsVos);
-			profile.setStatus(200);
-			profile.setMessage("User Loggedin Sucessfully...");
-		} else {
+			if (students != null && !students.isEmpty()) {
+				String sessionId = UUID.randomUUID().toString();
+				profile.setSchool(school);
+				List<StudentVO> studentsVos = new ArrayList<>();
+				for (Student student : students) {
+					SessionManager sessionManager = sessionRepo.findByUserId(student.getId());
+					if (sessionManager != null) {
+
+						profile.setAccessToken(sessionManager.getSessionId());
+					} else {
+						SessionManager manager = new SessionManager();
+						manager.setSessionId(sessionId);
+						manager.setUserId(student.getId());
+						manager.setSource("mobile");
+						sessionRepo.save(manager);
+						profile.setAccessToken(sessionId);
+					}
+					StudentVO vo = new StudentVO();
+					vo = VOMapper.getStudent(student);
+					studentsVos.add(vo);
+				}
+				profile.setStudents(studentsVos);
+				profile.setStatus(200);
+				profile.setMessage("User Loggedin Sucessfully...");
+			} else {
 			profile.setMessage("User not found with given credentials");
 			profile.setStatus(404);
 		}
@@ -86,6 +92,11 @@ public class LoginServiceImpl implements LoginService {
 		}
 
 		return profile;
+	}
+
+	private boolean doesSessionExistsForuser(int id) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -13,5 +13,7 @@ public class YooYooMobileController {
 		System.out.println("I am form mobile API...");
 		return "Hello Mobile";
 	}
+	
+	
 
 }

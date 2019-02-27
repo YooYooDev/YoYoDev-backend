@@ -28,5 +28,9 @@ public interface CurriculumService {
 
 	List<Topic> getAllTopics();
 	
-	void deleteTopic(Integer id);
+	ResultVO deleteTopic(Integer id);
+
+	Subject getSubjectById(Integer subjectId);
+
+	List<Topic> getTopicBySubjectId(Integer id);
 }

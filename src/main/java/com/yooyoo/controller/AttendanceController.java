@@ -26,7 +26,6 @@ public class AttendanceController {
 	private AttendanceService attendanceService; 
 	
 	@PostMapping("/save")
-
 	public ResponseEntity<Boolean> saveAttendance(@RequestBody AttendanceVO attendance) {
 		logger.info("Save saveAttendance Method hit "+attendance.getSchoolId());
 		try {

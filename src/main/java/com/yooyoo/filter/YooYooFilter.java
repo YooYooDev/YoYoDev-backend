@@ -30,7 +30,7 @@ public class YooYooFilter implements Filter{
 			throws IOException, ServletException {
         System.out.println("It is YooYooFilter...");
         HttpServletRequest request = (HttpServletRequest) req;
-        final String val = request.getHeader("token");
+        final String val = request.getHeader("accessToken");
 
         if (true) {
             ((HttpServletResponse) res).sendError(HttpServletResponse.SC_UNAUTHORIZED, "The token is not valid.");

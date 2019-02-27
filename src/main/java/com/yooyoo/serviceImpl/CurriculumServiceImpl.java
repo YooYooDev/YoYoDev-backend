@@ -91,9 +91,18 @@ public class CurriculumServiceImpl implements CurriculumService {
 	}
 
 	@Override
-	public void deleteTopic(Integer id) {
-		// TODO Auto-generated method stub
-
+	public ResultVO deleteTopic(Integer id) {
+		ResultVO vo = new ResultVO();
+		try{
+		Topic topic = getTopicById(id);
+		topicRepo.delete(topic);
+		vo.setStatus(200);
+		vo.setMessage("Record deleted sucessfully...");
+		}catch(Exception e){
+			vo.setStatus(400);
+			vo.setMessage("not able to delete record ..");
+		}
+		return vo;
 	}
 
 	@Override
@@ -102,7 +111,7 @@ public class CurriculumServiceImpl implements CurriculumService {
 		Topic topic0 = getTopicById(topic.getId());
 		if (topic0 != null) {
 			Topic topic1 = topicRepo.getTopicByName(topic.getName());
-			if (topic1 == null) {
+			if (!(topic0.getName().equalsIgnoreCase(topic.getName()) && topic0.getId() != topic1.getId())) {
 				topicRepo.save(topic);
 				result.setMessage("Record updated Sucessfully ...");
 				result.setStatus(200);
@@ -125,12 +134,24 @@ public class CurriculumServiceImpl implements CurriculumService {
 
 	@Override
 	public List<Topic> getAllTopics() {
-		List<Topic> result = new ArrayList<>();
-		Iterable<Topic> topics = topicRepo.findAll();
+		List<Topic> result = topicRepo.getAllTopics();
+		/*Iterable<Topic> topics = topicRepo.findAll();
 		for (Topic t : topics) {
 			result.add(t);
-		}
+		}*/
 		return result;
+	}
+
+	@Override
+	public Subject getSubjectById(Integer subjectId) {
+		Optional<Subject> sub = subjectRepo.findById(subjectId);
+		return sub.get();
+	}
+
+	@Override
+	public List<Topic> getTopicBySubjectId(Integer id) {
+		return topicRepo.getAllTopicsBySubjectId(id);
+		
 	}
 
 }
