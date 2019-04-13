@@ -9,17 +9,21 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yooyoo.model.FeedBack;
 import com.yooyoo.model.Grade;
 import com.yooyoo.model.Notifications;
 import com.yooyoo.model.School;
 import com.yooyoo.model.Student;
+import com.yooyoo.repository.FeedBackRepository;
 import com.yooyoo.repository.GradeRepository;
 import com.yooyoo.repository.NotificationRepository;
 import com.yooyoo.repository.SchoolRepository;
 import com.yooyoo.repository.StudentRepository;
 import com.yooyoo.service.NotificationService;
 import com.yooyoo.util.VOMapper;
+import com.yooyoo.vo.FeedBackVO;
 import com.yooyoo.vo.NotificationsVO;
+import com.yooyoo.vo.ResultVO;
 
 
 @Service
@@ -33,6 +37,10 @@ public class NotificationServiceImpl implements NotificationService{
 	GradeRepository gradeRepository;
     @Autowired
 	StudentRepository studentRepository;
+    
+    @Autowired
+    FeedBackRepository feedbackRepository;
+    
 
 	@Override
 	public void saveNotification(NotificationsVO notificationVO) {
@@ -43,6 +51,7 @@ public class NotificationServiceImpl implements NotificationService{
 		notification.setSchool(school.get());
 		notification.setGrade(grade);
 		notification.setStudent(student);
+		notification.setDeleted("N");
 		repository.save(notification);
 		
 	}
@@ -87,6 +96,55 @@ public class NotificationServiceImpl implements NotificationService{
 			notifiList.add(VOMapper.getNotificationVO(not));
 		}
 		return notifiList;
+	}
+
+	@Override
+	public List<NotificationsVO> getNotificationByUser(int studentId) {
+		List<NotificationsVO> notifiList = new ArrayList<>();
+		List<Notifications> notis = null;
+		if(studentId !=0){
+			notis = repository.getNotificationDetailsUserId(studentId);
+		}
+		for(Notifications not : notis){
+			notifiList.add(VOMapper.getNotificationVO(not));
+		}
+		return notifiList;
+	}
+
+	@Override
+	public ResultVO updateNotification(int notificationId) {
+		ResultVO resultVO = new ResultVO();
+		Optional<Notifications> notice = repository.findById(notificationId);
+		if (notice != null) {
+			Notifications assignment = notice.get();
+			assignment.setDeleted("Y");
+			repository.save(assignment);
+			resultVO.setStatus(200);
+			resultVO.setMessage("Notification removed successfully...");
+		} else {
+			resultVO.setStatus(404);
+			resultVO.setMessage("Notification not found for given Id");
+		}
+		return resultVO;
+	}
+
+	@Override
+	public ResultVO saveFeedBack(FeedBackVO feedback) {
+		ResultVO vo = new ResultVO();
+		if(feedback != null && feedback.getStudentId() != 0){
+			FeedBack fBack = new FeedBack();
+			Student student =  studentRepository.findById(feedback.getStudentId());
+			fBack.setStudent(student);
+			fBack.setMessage(feedback.getMessage());
+			feedbackRepository.save(fBack);
+			vo.setStatus(200);
+			vo.setMessage("Feedback saved sucessfully...");
+			
+		}else{
+			vo.setStatus(400);
+			vo.setMessage("Issue with saving feedback...");
+		}
+		return vo;
 	}
 
 }

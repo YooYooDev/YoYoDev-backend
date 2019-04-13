@@ -16,6 +16,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class AssignmentVO {
+	
 	private Integer id;
 
 	private Integer topicId;

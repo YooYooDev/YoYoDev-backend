@@ -15,17 +15,20 @@ public interface NotificationRepository extends CrudRepository<Notifications, In
 	
 	public static String GET_NOTIFICATION_DETAILS_BYSCHOOLID_AND_CLASSID = "select n from Notifications n where"
 			+ " n.school.id = :schoolId and n.grade.id = :gradeId"
-			+ " and (CURRENT_DATE-date(created_at)) <=15";
+			+ " and (CURRENT_DATE-date(created_at)) <=15 and n.deleted = 'N'";
 	
 	public static String GET_NOTIFICATION_DETAILS_BYSCHOOLID_AND_CLASSID_AND_STUDENTID = "select n from Notifications n where"
 			+ " n.school.id = :schoolId and n.grade.id = :gradeId and n.student.id = :studentId"
-			+ " and (CURRENT_DATE-date(created_at)) <=15";
+			+ " and (CURRENT_DATE-date(created_at)) <=15 and n.deleted = 'N'";
 	
 	public static String GET_NOTIFICATION_DETAILS = "select n from Notifications n where"
-			+ " (CURRENT_DATE-date(created_at)) <=15";
+			+ " (CURRENT_DATE-date(created_at)) <=15 and n.deleted = 'N'";
 	
 	public static String GET_NOTIFICATION_DETAILS_BYSCHOOLID = "select n from Notifications n where"
-			+ " n.school.id = :schoolId and (CURRENT_DATE-date(created_at)) <=15";
+			+ " n.school.id = :schoolId and (CURRENT_DATE-date(created_at)) <=15 and n.deleted = 'N'";
+	
+	public static String GET_NOTIFICATION_DETAILS_STUDENTID = "select n from Notifications n where"
+			+ " n.student.id = :studentId and (CURRENT_DATE-date(created_at)) <=15 and n.deleted = 'N'";
 
 	public List<Notifications> findAll();
 
@@ -42,5 +45,8 @@ public interface NotificationRepository extends CrudRepository<Notifications, In
 	@Query(GET_NOTIFICATION_DETAILS_BYSCHOOLID_AND_CLASSID_AND_STUDENTID)
 	public Set<Notifications> getNotificationDetailsBySchoolIdAndStudentId(@Param("schoolId") int schoolId,
 			@Param("gradeId") int gradeId,@Param("studentId") int studentId);
+	
+	@Query(GET_NOTIFICATION_DETAILS_STUDENTID)
+	public List<Notifications> getNotificationDetailsUserId(@Param("studentId") int studentId);
 
 }

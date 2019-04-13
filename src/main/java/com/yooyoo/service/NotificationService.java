@@ -2,7 +2,9 @@ package com.yooyoo.service;
 
 import java.util.List;
 
+import com.yooyoo.vo.FeedBackVO;
 import com.yooyoo.vo.NotificationsVO;
+import com.yooyoo.vo.ResultVO;
 
 public interface NotificationService {
 
@@ -15,5 +17,11 @@ public interface NotificationService {
 	public List<NotificationsVO> getNotificationsBySchoolANdClass(NotificationsVO notificationVO);
 
 	public void deleteNotificaitons(Integer id);
+	
+	public List<NotificationsVO> getNotificationByUser(int studentId);
+	
+	public ResultVO updateNotification(int notificationId);
+	
+	public ResultVO saveFeedBack(FeedBackVO feedback);
 
 }

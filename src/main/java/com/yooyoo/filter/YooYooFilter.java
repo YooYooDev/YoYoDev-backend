@@ -12,12 +12,20 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.yooyoo.service.SessionService;
+import com.yooyoo.serviceImpl.SessionServiceImpl;
+
 @WebFilter(
         urlPatterns = "/mobile/*",
         filterName = "mobileFilter",
         description = "Filter all mobile URLs"       
 )
 public class YooYooFilter implements Filter{
+	
+	@Autowired
+	SessionService service;
 
 	@Override
 	public void destroy() {
@@ -31,8 +39,9 @@ public class YooYooFilter implements Filter{
         System.out.println("It is YooYooFilter...");
         HttpServletRequest request = (HttpServletRequest) req;
         final String val = request.getHeader("accessToken");
-
-        if (true) {
+        System.out.println("It is YooYooFilter...Token is :-"+val);
+        boolean isVaidToken = service.findSessionByToken(val);
+        if (!isVaidToken) {
             ((HttpServletResponse) res).sendError(HttpServletResponse.SC_UNAUTHORIZED, "The token is not valid.");
         } else {
             chain.doFilter(req, res);

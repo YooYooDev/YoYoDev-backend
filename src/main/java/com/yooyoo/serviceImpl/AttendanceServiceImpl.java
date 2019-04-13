@@ -20,6 +20,7 @@ import com.yooyoo.model.Student;
 import com.yooyoo.repository.AttendanceRepository;
 import com.yooyoo.service.AttendanceService;
 import com.yooyoo.vo.AttendanceVO;
+import com.yooyoo.vo.MobileAttendanceVO;
 import com.yooyoo.vo.StudentDTO;
 
 @Service
@@ -83,5 +84,23 @@ public class AttendanceServiceImpl implements AttendanceService {
 			ats.add(vo);
 		}
 		return ats;
+	}
+
+	@Override
+	public List<MobileAttendanceVO> getAttendancesByUseridAndMonth(int userId, String month) {
+		List<MobileAttendanceVO> mobileAttendances = new ArrayList<>();
+		List<Attendance> attendances = attendanceRepository.getAttendansesForUser(userId);
+		for(Attendance att : attendances){
+			MobileAttendanceVO vo = new MobileAttendanceVO();
+			vo.setStatus(att.getStatus());
+			vo.setStudentName(att.getStudent().getFirst_name());
+			vo.setStudentid(att.getStudent().getId());
+			DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy");  
+			String strDate = dateFormat.format(att.getAttend_date());
+			vo.setDate(strDate);
+			mobileAttendances.add(vo);
+		}
+		
+		return mobileAttendances;
 	}
 }

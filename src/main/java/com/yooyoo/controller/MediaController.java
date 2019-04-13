@@ -19,20 +19,25 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.yooyoo.model.Fees;
+import com.yooyoo.model.QuestionMedia;
 import com.yooyoo.repository.FeeRepository;
 import com.yooyoo.service.FeesService;
+import com.yooyoo.service.QuestionMediaService;
 
 @RestController
-@RequestMapping(value = { "/images" })
-public class ImagesController {
-	Logger logger = LoggerFactory.getLogger(ImagesController.class);
+@RequestMapping(value = { "/media" })
+public class MediaController {
+	Logger logger = LoggerFactory.getLogger(MediaController.class);
 
 	@Autowired
 	public FeesService feeService;
-	
+
+	@Autowired
+	public QuestionMediaService questionMediaService;
+
 	@Autowired
 	FeeRepository repository;
-	
+
 	@PostMapping("/upload/{feeId}")
 	public ResponseEntity<Boolean> saveFees(@RequestParam("image") MultipartFile image,
 			@PathVariable("feeId") Integer feeId) {
@@ -50,9 +55,9 @@ public class ImagesController {
 		}
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
-	
-	@GetMapping(value = "/getimage/{feeId}" ,  produces = MediaType.IMAGE_PNG_VALUE)
-	public ResponseEntity<byte[]> getFees(@PathVariable("feeId") Integer feeId,HttpServletResponse response) {
+
+	@GetMapping(value = "/getimage/{feeId}", produces = MediaType.IMAGE_PNG_VALUE)
+	public ResponseEntity<byte[]> getFees(@PathVariable("feeId") Integer feeId, HttpServletResponse response) {
 		logger.info("Save Fees Method hit ");
 		Fees fees = null;
 		try {
@@ -68,6 +73,40 @@ public class ImagesController {
 		}
 		response.setContentType(MediaType.IMAGE_PNG_VALUE);
 		return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(fees.getImage1());
+	}
+
+	@PostMapping("/questions/upload/{questionId}")
+	public ResponseEntity<Boolean> saveQuestionMedia(@RequestParam("media") MultipartFile media,
+			@PathVariable("questionId") Integer questionId) {
+		logger.info("Save Fees Method hit ");
+		try {
+			questionMediaService.saveQuestionMedia(questionId, media);
+		} catch (Exception e) {
+			System.out.println(e);
+			logger.debug("Error While Save Save the Fees Details");
+			logger.error("Error While Save Save the Fees Details" + e.getStackTrace());
+			return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+
+	@GetMapping(value = "/getMedia/{questionId}")
+	public ResponseEntity<byte[]> getQuestionAudio(@PathVariable("questionId") Integer questionId,
+			HttpServletResponse response) {
+		logger.info("Save Fees Method hit ");
+		QuestionMedia media = null;
+		try {
+
+			media = questionMediaService.getQuestionMedia(questionId);
+
+		} catch (Exception e) {
+			System.out.println(e);
+			logger.debug("Error While getting Details");
+			logger.error("Error While  getting Details" + e.getStackTrace());
+			return new ResponseEntity<>(new byte[1], HttpStatus.BAD_REQUEST);
+		}
+		response.setContentType(media.getContentType());
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(media.getContentType())).body(media.getMedia());
 	}
 
 }
