@@ -2,6 +2,8 @@ package com.yooyoo.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.yooyoo.model.Category;
 import com.yooyoo.model.Subject;
 import com.yooyoo.model.Topic;
@@ -33,4 +35,10 @@ public interface CurriculumService {
 	Subject getSubjectById(Integer subjectId);
 
 	List<Topic> getTopicBySubjectId(Integer id);
+	
+	byte[] getWorkSheetMedia(Integer topicId) throws Exception;
+	
+	void saveWorkSheetMedia(Integer topicId, MultipartFile mediaFile) throws Exception;
+
+	ResultVO updateWorkSheetForTopic(Integer topicId, MultipartFile media, String url) throws Exception;
 }

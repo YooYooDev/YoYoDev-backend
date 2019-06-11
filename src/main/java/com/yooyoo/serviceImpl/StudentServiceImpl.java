@@ -112,11 +112,16 @@ public class StudentServiceImpl implements StudentService{
 	}
 
 	@Override
-	public void deleteStudent(int studentId) {
+	public void deleteStudent(int studentId, boolean delete) {
 		Student student = studentRepository.findById(studentId);
-		student.setDeleted("Y");
-		studentRepository.save(student);
-		
+		if (delete) {
+			studentRepository.delete(student);
+		} else {
+			student.setDeleted("Y");
+			studentRepository.save(student);
+
+		}
+
 	}
 
 	@Override

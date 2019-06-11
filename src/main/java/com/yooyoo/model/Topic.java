@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -58,6 +59,10 @@ public class Topic {
 	
 	@Column(name="worksheetLink")
 	private String worksheetLink;
+	
+	@Lob
+	@Column(length=100000)
+	private byte[] workSheetImage;
 	
 	
 	@ManyToOne

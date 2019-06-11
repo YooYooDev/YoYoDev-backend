@@ -16,6 +16,7 @@ import lombok.Setter;
 public class QuestionVO {
 	private Integer id;
 	private String question;
+	private boolean appeared;
 	private String answer;
 	private String mediaLink;
 	private String contentType;

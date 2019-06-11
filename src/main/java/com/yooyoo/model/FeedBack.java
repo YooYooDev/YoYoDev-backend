@@ -38,6 +38,8 @@ public class FeedBack {
 	@SequenceGenerator(name = "feedback_id_seq", sequenceName = "feedback_id_seq", allocationSize = 1)
 	private Integer id;
 	
+	private String subject;
+	
 	private String message;
 
 	@OneToOne

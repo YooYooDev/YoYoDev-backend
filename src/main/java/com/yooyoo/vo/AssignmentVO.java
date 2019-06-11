@@ -29,4 +29,6 @@ public class AssignmentVO {
 	
 	private String date;
 	
+	private String toDate;
+	
 }

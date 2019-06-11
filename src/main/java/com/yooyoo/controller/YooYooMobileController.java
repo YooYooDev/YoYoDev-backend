@@ -1,6 +1,12 @@
 package com.yooyoo.controller;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,18 +19,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.yooyoo.model.Result;
 import com.yooyoo.service.AssignmentService;
 import com.yooyoo.service.AttendanceService;
 import com.yooyoo.service.NotificationService;
+import com.yooyoo.service.QuizService;
+import com.yooyoo.service.ReportService;
+import com.yooyoo.service.SessionService;
+import com.yooyoo.service.StudentService;
 import com.yooyoo.vo.CurriculamVO;
 import com.yooyoo.vo.FeedBackVO;
 import com.yooyoo.vo.MobileAssignmentVO;
 import com.yooyoo.vo.MobileAttendanceVO;
 import com.yooyoo.vo.NotificationsVO;
 import com.yooyoo.vo.QuestionVO;
+import com.yooyoo.vo.ReportVO;
 import com.yooyoo.vo.ResultVO;
+import com.yooyoo.vo.StudentVO;
 import com.yooyoo.vo.VideoVO;
 
 @RestController
@@ -41,6 +55,18 @@ Logger logger = LoggerFactory.getLogger(YooYooMobileController.class);
 	
 	@Autowired
 	NotificationService notificationService;
+	
+	@Autowired
+	QuizService quizService;
+	
+	@Autowired
+	ReportService reportService;
+	
+	@Autowired
+	SessionService sessionService;
+	
+	@Autowired
+	StudentService studentService;
 	
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	public String testMobile(){
@@ -80,11 +106,12 @@ Logger logger = LoggerFactory.getLogger(YooYooMobileController.class);
 	
 	@GetMapping("/getAssignmentsQuestionsBySchoolAndGrade/{id}/{grade:.+}")
 	public ResponseEntity<List<QuestionVO>> getAssignmentsQuestionsBySchool(@PathVariable("id") int schoolId,
-			@PathVariable("grade") String grade) {
+			@PathVariable("grade") String grade, HttpServletRequest request) {
 		logger.info("getAll Assignment  Method hit ");
 		List<QuestionVO> questions = null;
 		try {
-			questions = service.getAssignmentQuestionsBySchoolAndGrade(schoolId, grade);
+			final String val = request.getHeader("accessToken");
+			questions = service.getAssignmentQuestionsBySchoolAndGrade(schoolId, grade, val);
 		} catch (Exception e) {
 			logger.debug("Error While Save the getting assignments by school and grade" + e.getMessage());
 			logger.error("Error While Save the getting assignments by school and grade" + e.getStackTrace());
@@ -93,12 +120,15 @@ Logger logger = LoggerFactory.getLogger(YooYooMobileController.class);
 		return new ResponseEntity<>(questions, HttpStatus.OK);
 	}
 	
-	@GetMapping("/getCurriculamsBySchool/{schoolId}")
-	public ResponseEntity<List<CurriculamVO>> getCurriculamBySchool(@PathVariable("schoolId") int schoolId) {
+	@GetMapping("/getCurriculamsBySchool/{schoolId}/{month}")
+	public ResponseEntity<List<CurriculamVO>> getCurriculamBySchool(@PathVariable("schoolId") int schoolId,
+			@PathVariable("month") String month) {
 		logger.info("getAll curriculam  Method hit ");
 		List<CurriculamVO> curriculams = null;
 		try {
-			curriculams = service.getCurriculamsForSchool(schoolId);
+			if(month.length() == 3){
+			curriculams = service.getCurriculamsForSchool(schoolId, month);
+			}
 		} catch (Exception e) {
 			logger.debug("Error While Save the getting assignments by school and grade" + e.getMessage());
 			logger.error("Error While Save the getting assignments by school and grade" + e.getStackTrace());
@@ -114,22 +144,76 @@ Logger logger = LoggerFactory.getLogger(YooYooMobileController.class);
 		try {
 			vo = service.finaAssignmentById(assignMentId);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.debug("Error While Save the getting assignments by school and grade" + e.getMessage());
 			logger.error("Error While Save the getting assignments by school and grade" + e.getStackTrace());
 			return new ResponseEntity<>(vo, HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>(vo, HttpStatus.OK);
 	}
-	
-	
-	@GetMapping("/getAttendanceForStudent/{id}/{month}")
-	public ResponseEntity<List<MobileAttendanceVO>> getAttendanceByMonth(@PathVariable("id") int studentId,
-			@PathVariable("month") String month) {
-		logger.info("getattendance  Method hit ");
-		List<MobileAttendanceVO> attendances = null;
+
+	@GetMapping("/getAssignmentsById/{id}")
+	public ResponseEntity<List<MobileAssignmentVO>> getAssignmentsByAssignmentId(@PathVariable("id") int assignmentId) {
+		logger.info("getAll Assignment  Method hit ");
+		List<MobileAssignmentVO> assignments = null;
 		try {
-			attendances = attendanceService.getAttendancesByUseridAndMonth(studentId, month);
+			assignments = service.getAssignmentByAssignmentId(assignmentId);
 		} catch (Exception e) {
+			logger.debug("Error While Save the getting assignments by school and grade" + e.getMessage());
+			logger.error("Error While Save the getting assignments by school and grade" + e.getStackTrace());
+			return new ResponseEntity<>(assignments, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(assignments, HttpStatus.OK);
+	}
+	
+	@GetMapping("/getVideosByAssignmentId/{id}")
+	public ResponseEntity<List<VideoVO>> getAssignmentsVideosByAssignment(@PathVariable("id") int assignmentId) {
+		logger.info("getAll Assignment  Method hit ");
+		List<VideoVO> videos = null;
+		try {
+			videos = service.getVideosByAssignmentId(assignmentId);
+		} catch (Exception e) {
+			logger.debug("Error While Save the getting assignments by school and grade" + e.getMessage());
+			logger.error("Error While Save the getting assignments by school and grade" + e.getStackTrace());
+			return new ResponseEntity<>(videos, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(videos, HttpStatus.OK);
+	}
+	
+	@GetMapping("/getQuestionsByAssignmentId/{id}")
+	public ResponseEntity<List<QuestionVO>> getAssignmentsQuestionsByAssignment(@PathVariable("id") int assignmentId,
+			HttpServletRequest request) {
+		logger.info("getAll Assignment  Method hit ");
+		List<QuestionVO> questions = null;
+		try {
+			final String val = request.getHeader("accessToken");
+			System.out.println("It is YooYooMobile Conntroller...Token is :-" + val);
+			questions = service.getQuestionsByAssignmentId(assignmentId, val);
+		} catch (Exception e) {
+			logger.debug("Error While Save the getting assignments by school and grade" + e.getMessage());
+			logger.error("Error While Save the getting assignments by school and grade" + e.getStackTrace());
+			return new ResponseEntity<>(questions, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(questions, HttpStatus.OK);
+	}
+	
+	
+	@GetMapping("/getAttendanceForStudent/{id}")
+	public ResponseEntity<MobileAttendanceVO> getAttendanceByMonth(@PathVariable("id") int studentId,
+			@RequestParam("fromDate") String fromDate, @RequestParam("toDate") String toDate) {
+		logger.info("getattendance  Method hit ");
+		MobileAttendanceVO attendances = null;
+		try {
+			DateFormat formatter = new SimpleDateFormat("dd-MMM-yy");
+			try {
+				Date date = formatter.parse(fromDate);
+				Date date1 = formatter.parse(toDate);
+				attendances = attendanceService.getAttendancesByUseridAndMonth(studentId, date, date1);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 			logger.debug("Error While Save the getting attendance by student and month" + e.getMessage());
 			logger.error("Error While Save the getting attendance by student and month" + e.getStackTrace());
 			return new ResponseEntity<>(attendances, HttpStatus.BAD_REQUEST);
@@ -181,8 +265,46 @@ Logger logger = LoggerFactory.getLogger(YooYooMobileController.class);
 	}
 	
 	
+	@PostMapping("/results/saveresult")
+	public ResponseEntity<ResultVO> saveResult(@RequestBody List<Result> results) {
+		logger.info("update mobile  notification by notification id  Method hit ");
+		ResultVO vo = null;
+		try {
+			vo = quizService.saveResult(results);
+		} catch (Exception e) {
+			logger.debug("Error getting notification" + e.getMessage());
+			logger.error("Error getting notification" + e.getStackTrace());
+			return new ResponseEntity<>(vo, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(vo, HttpStatus.OK);
+	}
 	
+	@GetMapping("/getReport/{id}")
+	public ResponseEntity<ReportVO> getReport(@PathVariable("id") int studentId) {
+		logger.info("getReport  Method hit ");
+		ReportVO vo = null;
+		try {
+			vo = reportService.getReportVO(studentId);
+		} catch (Exception e) {
+			logger.debug("Error getting report" + e.getMessage());
+			logger.error("Error getting report" + e.getStackTrace());
+			return new ResponseEntity<>(vo, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(vo, HttpStatus.OK);
+	}
 	
-	
+	@PostMapping("/profile/update")
+	public ResponseEntity<ResultVO> updateUser(@RequestBody StudentVO student) {
+		logger.info("update Student iprovide from mobile ");
+		ResultVO vo = null;
+		try {
+			vo = studentService.updateStudent(student);
+		} catch (Exception e) {
+			logger.debug("Error updating student profile" + e.getMessage());
+			logger.error("Error updating student profile" + e.getStackTrace());
+			return new ResponseEntity<>(vo, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(vo, HttpStatus.OK);
+	}
 
 }

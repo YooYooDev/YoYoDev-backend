@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,20 +88,15 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	@Override
-	public List<MobileAttendanceVO> getAttendancesByUseridAndMonth(int userId, String month) {
-		List<MobileAttendanceVO> mobileAttendances = new ArrayList<>();
-		List<Attendance> attendances = attendanceRepository.getAttendansesForUser(userId);
-		for(Attendance att : attendances){
-			MobileAttendanceVO vo = new MobileAttendanceVO();
-			vo.setStatus(att.getStatus());
-			vo.setStudentName(att.getStudent().getFirst_name());
-			vo.setStudentid(att.getStudent().getId());
-			DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy");  
-			String strDate = dateFormat.format(att.getAttend_date());
-			vo.setDate(strDate);
-			mobileAttendances.add(vo);
+	public MobileAttendanceVO getAttendancesByUseridAndMonth(int userId, Date fromDate, Date toDate) {
+		MobileAttendanceVO mobileAttendance = new MobileAttendanceVO();
+		List<Attendance> attendances = attendanceRepository.getAttendansesForUser(userId, fromDate, toDate);
+		if (attendances != null && !attendances.isEmpty()) {
+			mobileAttendance.setAttendanceTakenDays(attendances.size());
+			mobileAttendance.setPresentDays(
+					attendances.stream().filter(r -> r.getStatus() == 1).collect(Collectors.toList()).size());
 		}
-		
-		return mobileAttendances;
+
+		return mobileAttendance;
 	}
 }

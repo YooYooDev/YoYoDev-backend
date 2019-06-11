@@ -12,7 +12,7 @@ public interface StudentService {
 	
 	public ResultVO updateStudent(StudentVO student);
 	
-	public void deleteStudent(int studentId);
+	public void deleteStudent(int studentId, boolean delete);
 	
 	public List<StudentVO> getAllStudentsBySchool(int schoolId);
 	

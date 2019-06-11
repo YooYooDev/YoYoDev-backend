@@ -136,6 +136,7 @@ public class NotificationServiceImpl implements NotificationService{
 			Student student =  studentRepository.findById(feedback.getStudentId());
 			fBack.setStudent(student);
 			fBack.setMessage(feedback.getMessage());
+			fBack.setSubject(feedback.getSubject());
 			feedbackRepository.save(fBack);
 			vo.setStatus(200);
 			vo.setMessage("Feedback saved sucessfully...");

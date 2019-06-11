@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -52,6 +53,10 @@ public class Fees {
 	@Column(name = "pending_amount")
 	Float pendingAmount;
 	
+	Float tutionFee;
+	
+	Float transportationFee;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "school_id")
 	private School school;
@@ -60,10 +65,9 @@ public class Fees {
 	Date updatedd_at;
 	String deleted ;
 	
+	@Lob
+	@Column(length=100000)
 	private byte[] image1;
-	private Byte[] image2;
-	private Byte[] image3;
-	private Byte[] image4;
-	private Byte[] image5;
+	
 
 }

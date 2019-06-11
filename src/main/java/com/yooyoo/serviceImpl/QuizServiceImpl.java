@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.yooyoo.model.Question;
 import com.yooyoo.model.Quiz;
+import com.yooyoo.model.Result;
 import com.yooyoo.model.Topic;
 import com.yooyoo.repository.QuestionRepository;
 import com.yooyoo.repository.QuizRepository;
@@ -29,7 +30,6 @@ public class QuizServiceImpl implements QuizService {
 	@Autowired
 	private QuestionRepository questionRepository;
 
-	@SuppressWarnings("unused")
 	@Autowired
 	private ResultRepository resultRepository;
 
@@ -95,6 +95,22 @@ public class QuizServiceImpl implements QuizService {
 			quizVOs.add(vo);
 		}
 		return quizVOs;
+	}
+
+	@Override
+	public ResultVO saveResult(List<Result> results) {
+		ResultVO result = new ResultVO();
+		if (results != null && !results.isEmpty()) {
+			for (Result sResult : results) {
+				sResult.setAttempts(1);
+				resultRepository.save(sResult);
+			}
+
+		} else {
+			result.setStatus(400);
+			result.setMessage("No results found to save...");
+		}
+		return result;
 	}
 
 }

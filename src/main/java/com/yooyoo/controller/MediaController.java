@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.yooyoo.model.Fees;
 import com.yooyoo.model.QuestionMedia;
 import com.yooyoo.repository.FeeRepository;
+import com.yooyoo.service.CurriculumService;
 import com.yooyoo.service.FeesService;
 import com.yooyoo.service.QuestionMediaService;
 
@@ -37,6 +38,9 @@ public class MediaController {
 
 	@Autowired
 	FeeRepository repository;
+	
+	@Autowired
+	CurriculumService cService;
 
 	@PostMapping("/upload/{feeId}")
 	public ResponseEntity<Boolean> saveFees(@RequestParam("image") MultipartFile image,
@@ -107,6 +111,39 @@ public class MediaController {
 		}
 		response.setContentType(media.getContentType());
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(media.getContentType())).body(media.getMedia());
+	}
+	
+	
+	@PostMapping("/worksheet/upload/{topicId}")
+	public ResponseEntity<Boolean> saveWorkSheetMedia(@RequestParam("media") MultipartFile media,
+			@PathVariable("topicId") Integer topicId) {
+		logger.info("Save worksheet Method hit ");
+		try {
+			cService.saveWorkSheetMedia(topicId, media);
+		} catch (Exception e) {
+			System.out.println(e);
+			logger.debug("Error While Save Save the worksheet Details");
+			logger.error("Error While Save Save the worksheet Details" + e.getStackTrace());
+			return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "/getworksheetlink/{topicid}")
+	public ResponseEntity<byte[]> getWorkSheetLink(@PathVariable("topicid") Integer topicid,
+			HttpServletResponse response) {
+		logger.info("Save Fees Method hit ");
+		byte[] media = null;
+		try {
+			media = cService.getWorkSheetMedia(topicid);
+		} catch (Exception e) {
+			System.out.println(e);
+			logger.debug("Error While getting Details");
+			logger.error("Error While  getting Details" + e.getStackTrace());
+			return new ResponseEntity<>(new byte[1], HttpStatus.BAD_REQUEST);
+		}
+		response.setContentType(MediaType.IMAGE_PNG_VALUE);
+		return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(media);
 	}
 
 }

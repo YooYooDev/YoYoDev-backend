@@ -32,8 +32,10 @@ public class Result {
 	@SequenceGenerator(name = "result_id_seq", sequenceName = "result_id_seq", allocationSize = 1)
 	private Integer id;
 	private Integer studentId;
+	private Integer schoolId;
 	private Integer questionId;
 	private Boolean result;
+	private Integer attempts;
 	private Date date;
 	
 

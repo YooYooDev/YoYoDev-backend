@@ -1,5 +1,6 @@
 package com.yooyoo.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.yooyoo.vo.AttendanceVO;
@@ -11,7 +12,7 @@ public interface AttendanceService {
 	List<AttendanceVO> getAttandanceDetails(int schoolId);
 	
 	
-	List<MobileAttendanceVO> getAttendancesByUseridAndMonth(int userId, String month);
+	MobileAttendanceVO getAttendancesByUseridAndMonth(int userId, Date date, Date date1);
 	
 
 }

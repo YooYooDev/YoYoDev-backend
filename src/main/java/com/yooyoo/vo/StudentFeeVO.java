@@ -1,7 +1,5 @@
 package com.yooyoo.vo;
 
-import java.util.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -15,20 +13,18 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode
-public class FeesVO {
-	private Integer id;
-	private String studentName;
-	private int studentId;
+public class StudentFeeVO {
+	private int id ;
+	private String firstName;
+	private String middleName;
+	private String lastName ;
+	private int schoolId;
+	private int gradeId;
+	private String gradeName;
 	private Float tutionFee;
 	private Float transportationFee;
 	private Float totalBillAmount;
 	private Float paidBillAmount;
 	private Float pendingAmount;
-	private int schoolId;
-	private Date created_at;
-	private Date updatedd_at;
-	private int deleted;
-	private String gradeName;
-	private byte[] image1;
 
 }

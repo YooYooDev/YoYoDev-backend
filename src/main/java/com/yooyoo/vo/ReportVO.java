@@ -13,11 +13,17 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode
-public class MobileAttendanceVO {
-	private int Studentid;
-	private String studentName;
+public class ReportVO {
+	private int id;
+	private Integer noOfQuestionFaced;
+	private Integer noOfCorrectAnswers;
+	private Integer noOfVideosWatched;
+	private Integer noOfWorksheetAppeared;
 	private Integer attendanceTakenDays;
 	private Integer presentDays;
+	private float outstandingFees;
+	private float totalFees;
+	
 	
 
 }

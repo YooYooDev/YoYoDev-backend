@@ -28,23 +28,23 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Subject {
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="subject_id_seq")
-    @SequenceGenerator(name="subject_id_seq", sequenceName="subject_id_seq", allocationSize=1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "subject_id_seq")
+	@SequenceGenerator(name = "subject_id_seq", sequenceName = "subject_id_seq", allocationSize = 1)
 	private Integer id;
-	
-	@Column(name="subject_name")
-	String name ;
-	
-	@Column(name="created_date")
+
+	@Column(name = "subject_name", nullable = false)
+	String name;
+
+	@Column(name = "created_date")
 	Date createdDate;
 
-	@Column(name="updated_date")
+	@Column(name = "updated_date")
 	Date updatedDate;
-	
+
 	@OneToMany
 	private Set<Topic> topics;
-	
+
 }

@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.yooyoo.model.Category;
 import com.yooyoo.model.Subject;
@@ -16,7 +19,10 @@ import com.yooyoo.repository.TopicRepository;
 import com.yooyoo.service.CurriculumService;
 import com.yooyoo.vo.ResultVO;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class CurriculumServiceImpl implements CurriculumService {
 
 	@Autowired
@@ -27,6 +33,10 @@ public class CurriculumServiceImpl implements CurriculumService {
 
 	@Autowired
 	private TopicRepository topicRepo;
+	
+	@Value("${media.url}")
+	private String mediaUrl;
+
 
 	@Override
 	public void saveSubject(Subject subject) {
@@ -47,7 +57,9 @@ public class CurriculumServiceImpl implements CurriculumService {
 		List<Subject> subs = new ArrayList<>();
 		Iterable<Subject> subjects = subjectRepo.findAll();
 		for (Subject s : subjects) {
+			if(!s.getName().isEmpty()){
 			subs.add(s);
+			}
 		}
 		return subs;
 	}
@@ -57,7 +69,9 @@ public class CurriculumServiceImpl implements CurriculumService {
 		List<Category> cats = new ArrayList<>();
 		Iterable<Category> catrgories = categoryRepo.findAll();
 		for (Category s : catrgories) {
+			if(!s.getName().isEmpty()){
 			cats.add(s);
+			}
 		}
 		return cats;
 	}
@@ -135,10 +149,12 @@ public class CurriculumServiceImpl implements CurriculumService {
 	@Override
 	public List<Topic> getAllTopics() {
 		List<Topic> result = topicRepo.getAllTopics();
-		/*Iterable<Topic> topics = topicRepo.findAll();
-		for (Topic t : topics) {
-			result.add(t);
-		}*/
+		if (result != null && !result.isEmpty()) {
+			for (Topic t : result) {
+				t.setWorkSheetImage(null);
+				t.setQuizLink(mediaUrl + "getworksheetlink/" + t.getId()+"/?t="+System.currentTimeMillis());
+			}
+		}
 		return result;
 	}
 
@@ -153,5 +169,77 @@ public class CurriculumServiceImpl implements CurriculumService {
 		return topicRepo.getAllTopicsBySubjectId(id);
 		
 	}
+	
+	@Override
+	public void saveWorkSheetMedia(Integer topicId, MultipartFile mediaFile) throws Exception {
+		// Normalize file name
+		if (mediaFile != null) {
+			String audioName = StringUtils.cleanPath(mediaFile.getOriginalFilename());
+			if (audioName.contains("..")) {
+				throw new Exception("Sorry! Filename contains invalid path sequence ");
+			}
+
+		}
+
+		try {
+			if (topicRepo.findById(topicId).isPresent() && (mediaFile != null)) {
+				Topic topic = topicRepo.findById(topicId).get();
+				if (topic != null) {
+					topic.setWorkSheetImage(mediaFile.getBytes());
+					topicRepo.save(topic);
+				}
+
+			}
+		} catch (Exception ex) {
+			log.error("Could not store file, Please try again!", ex);
+		}
+
+	}
+	
+	@Override
+	public byte[] getWorkSheetMedia(Integer topicId) throws Exception {
+		Topic topic = null;
+		byte[] worksheetImage = null;
+		topic = topicRepo.findById(topicId).get();
+		if(topic != null){
+			worksheetImage = topic.getWorkSheetImage();
+		}else{
+			throw new Exception();
+		}
+		return worksheetImage;
+	}
+
+	@Override
+	public ResultVO updateWorkSheetForTopic(Integer topicId, MultipartFile mediaFile, String url) throws Exception {
+		ResultVO result = new ResultVO();
+		// Normalize file name
+				if (mediaFile != null) {
+					String audioName = StringUtils.cleanPath(mediaFile.getOriginalFilename());
+					if (audioName.contains("..")) {
+						throw new Exception("Sorry! Filename contains invalid path sequence ");
+					}
+
+				}
+				try {
+					if (topicRepo.findById(topicId).isPresent() && (mediaFile != null)) {
+						Topic topic = topicRepo.findById(topicId).get();
+						if (topic != null) {
+							topic.setWorksheetLink(url);
+							topic.setWorkSheetImage(mediaFile.getBytes());
+							topicRepo.save(topic);
+							result.setStatus(200);
+							result.setMessage("Worksheet Updated Sucessfully...");
+						}
+
+					}
+				} catch (Exception ex) {
+					result.setStatus(400);
+					result.setMessage("Unbale to update worksheet...");
+					log.error("Could not store file, Please try again!", ex);
+				}
+
+		return result;
+	}
+
 
 }

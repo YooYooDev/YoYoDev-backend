@@ -2,6 +2,7 @@ package com.yooyoo.controller;
 
 import java.util.Date;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +15,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.yooyoo.model.Category;
 import com.yooyoo.model.Subject;
 import com.yooyoo.model.Topic;
+import com.yooyoo.service.AssignmentService;
 import com.yooyoo.service.CurriculumService;
+import com.yooyoo.vo.QuizVO;
 import com.yooyoo.vo.ResultVO;
 
 @RestController
@@ -30,6 +35,9 @@ public class CurriculumController {
 
 	@Autowired
 	private CurriculumService curriculumService;
+	
+	@Autowired
+	private AssignmentService assignmentService;
 
 	@PostMapping("/create-subject")
 	public ResponseEntity<String> createSubject(@RequestBody Subject subject) {
@@ -200,6 +208,27 @@ public class CurriculumController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
+	@PostMapping("/updateworksheet/{topicId}")
+	public ResponseEntity<ResultVO> updateWorkSheet(@PathVariable("topicId") Integer topicId,
+			@RequestParam("media") MultipartFile media, @RequestParam("worksheetlink") String url) {
+		logger.info("update worksheet for topic API Method hit " + url);
+		ResultVO result = null;
+		if(topicId == null){
+			result = new ResultVO();
+			result.setStatus(400);
+			result.setMessage("Id not present for update topic");
+			return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+		}
+		try {
+			result = curriculumService.updateWorkSheetForTopic(topicId, media, url);
+		} catch (Exception e) {
+			logger.debug("Error While  update the topic Details");
+			logger.error("Error While  update the topic Details" + e.getStackTrace());
+			return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
 	@GetMapping("/getAllTopics")
 	public ResponseEntity<List<Topic>> getAllTopics() {
 		logger.info("get All topic API Method hit ");
@@ -228,6 +257,20 @@ public class CurriculumController {
 			return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
+	@GetMapping("/getquizbytopic/{topicid}")
+	public ResponseEntity<List<QuizVO>> getQuizByTopic(@PathVariable("topicid") int topicId) {
+		logger.info("getAll Assignment  Method hit ");
+		List<QuizVO> quizs = null;
+		try {
+			quizs = assignmentService.getQuizByTopic(topicId);
+		} catch (Exception e) {
+			logger.debug("Error While Save the getting assignments by school and grade" + e.getMessage());
+			logger.error("Error While Save the getting assignments by school and grade" + e.getStackTrace());
+			return new ResponseEntity<>(quizs, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(quizs, HttpStatus.OK);
 	}
 	
 

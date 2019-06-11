@@ -58,6 +58,8 @@ public class Assignment {
 	@Column(name="assignment_date")
 	private Date date;
 	
+	private Date toDate;
+	
 	@Column(name="created_date")
 	private Date createdDate;
 

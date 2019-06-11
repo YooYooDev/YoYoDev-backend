@@ -40,7 +40,7 @@ public class CredServiceImpl implements CredService{
 		manager.setRole(role.get());
 		Optional<School> school = schoolRepository.findById(credVo.getSchoolId());
 		manager.setSchool(school.get());
-		manager.setPassword("Welcome@123");
+		manager.setPassword(credVo.getPassword());
 		repository.save(manager);
 		result.setStatus(200);
 		result.setMessage("User Created Sucessfully...");

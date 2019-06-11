@@ -14,7 +14,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class CurriculamVO {
-	private String name;
+	private String subject;
+	private String topicName;
+	private String category;
 	private String date;
 	private int assignmentId;
 
