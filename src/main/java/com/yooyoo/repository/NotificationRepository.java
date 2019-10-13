@@ -18,7 +18,7 @@ public interface NotificationRepository extends CrudRepository<Notifications, In
 			+ " and (CURRENT_DATE-date(created_at)) <=15 and n.deleted = 'N'";
 	
 	public static String GET_NOTIFICATION_DETAILS_BYSCHOOLID_AND_CLASSID_AND_STUDENTID = "select n from Notifications n where"
-			+ " n.school.id = :schoolId and n.grade.id = :gradeId and n.student.id = :studentId"
+			+ " n.school.id = :schoolId and n.grade.id = :gradeId and n.studentId = :studentId"
 			+ " and (CURRENT_DATE-date(created_at)) <=15 and n.deleted = 'N'";
 	
 	public static String GET_NOTIFICATION_DETAILS = "select n from Notifications n where"
@@ -28,7 +28,7 @@ public interface NotificationRepository extends CrudRepository<Notifications, In
 			+ " n.school.id = :schoolId and (CURRENT_DATE-date(created_at)) <=15 and n.deleted = 'N'";
 	
 	public static String GET_NOTIFICATION_DETAILS_STUDENTID = "select n from Notifications n where"
-			+ " n.student.id = :studentId and (CURRENT_DATE-date(created_at)) <=15 and n.deleted = 'N'";
+			+ " n.studentId = :studentId and (CURRENT_DATE-date(created_at)) <=15 and n.deleted = 'N'";
 
 	public List<Notifications> findAll();
 

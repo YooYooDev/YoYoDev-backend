@@ -19,5 +19,8 @@ public class VideoVO {
 	private String videoLink;
 	private String videoThumbnail;
 	private String videoSubtitle;
+	private boolean hasViewed;
+	private String subject;
+	private boolean isCurriculam;
 
 }

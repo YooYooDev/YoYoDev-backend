@@ -35,6 +35,12 @@ public class FileUtils {
 				String dob = reader.get("Date Of Birth");
 				String fProfession = reader.get("Father's Profession");
 				String mProfession = reader.get("Mother's Profession");
+				
+				String password = reader.get("Password");
+				String address = reader.get("Address");
+				String city = reader.get("City");
+				String state = reader.get("State");
+				String pincide = reader.get("Pincode");
 
 				student.setSchoolId(schoolId);
 				if (name != null && !name.isEmpty()) {
@@ -82,6 +88,26 @@ public class FileUtils {
 
 				if (mProfession != null && !mProfession.isEmpty()) {
 					student.setMotherProfession(mProfession);
+				}
+				
+				if (password != null && !password.isEmpty()) {
+					student.setPassword(password);;
+				}
+				
+				if (address != null && !address.isEmpty()) {
+					student.setAddress(address);
+				}
+				
+				if (city != null && !city.isEmpty()) {
+					student.setCity(city);
+				}
+				
+				if (state != null && !state.isEmpty()) {
+					student.setState(state);
+				}
+				
+				if (pincide != null && !pincide.isEmpty()) {
+					student.setPinCode(pincide);
 				}
 				if (!checkNullOrEmpty(name) && !checkNullOrEmpty(grade) && !checkNullOrEmpty(fathersname)
 						&& !checkNullOrEmpty(mothersName) && !checkNullOrEmpty(mobile) && !checkNullOrEmpty(pemail)) {

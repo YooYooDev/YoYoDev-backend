@@ -108,22 +108,25 @@ public class FeesController {
 	}
 	
 	@GetMapping("/getAllStudents/{schoolId}")
-	public List<StudentFeeVO> getAllStudentBySchool(@PathVariable("schoolId") int schoolId) {
+	public List<FeesVO> getAllStudentBySchool(@PathVariable("schoolId") int schoolId) {
 		List<StudentVO> students = studentService.getAllStudentsBySchool(schoolId);
-		List<StudentFeeVO> studentFees = new ArrayList<>();
+		List<FeesVO> studentFees = new ArrayList<>();
 		logger.info("UserDetailas :- " + schoolId);
 		logger.info("Student infos are fetched...");
 		for(StudentVO student:students){
-			StudentFeeVO feeVO = VOMapper.getStudentFeeVO(student);
-			FeesVO fee = feeService.getFeesByStudent(feeVO);
-			if(fee != null){
-			feeVO.setTotalBillAmount(fee.getTotalBillAmount());
-			feeVO.setTransportationFee(fee.getTransportationFee());
-			feeVO.setTutionFee(fee.getTutionFee());
-			feeVO.setPaidBillAmount(fee.getPaidBillAmount());
-			feeVO.setPendingAmount(fee.getPendingAmount());
+			FeesVO fee = null;
+			StudentFeeVO feeVO1 = VOMapper.getStudentFeeVO(student);
+			fee = feeService.getFeesByStudent(feeVO1);
+			if(fee == null){
+				fee = new FeesVO();
+				fee.setStudentName(feeVO1.getFirstName());
+				fee.setSchoolId(feeVO1.getSchoolId());
+				fee.setStudentId(feeVO1.getId());
+				fee.setGradeName(feeVO1.getGradeName());
+				
 			}
-			studentFees.add(feeVO);
+			
+			studentFees.add(fee);
 		}
 		return studentFees;
 	}

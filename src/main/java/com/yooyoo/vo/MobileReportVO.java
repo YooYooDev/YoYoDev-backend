@@ -13,13 +13,10 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode
-public class CurriculamVO {
-	private String subject;
-	private String topicName;
-	private String category;
-	private String subjectMedia;
-	private String date;
-	private int assignmentId;
-	private boolean isCurriculam;
+public class MobileReportVO {
+	private Integer totalNoOfAssignment;
+	private Integer noOfQuestionFaced;
+	private Integer noOfVideosWatched;
+	private Integer noOfWorksheetAppeared;
 
 }

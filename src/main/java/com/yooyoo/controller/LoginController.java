@@ -68,6 +68,7 @@ public class LoginController {
 	 
 	 @RequestMapping(value = "/yooyoo/mobilelogin", method = RequestMethod.POST)
 	 public Profile loginMobileUser(@RequestBody LoginVO userForm) {
+		 logger.info("Loggedin User details  :- "+userForm.getEmail()+":"+userForm.getPassword()+":"+userForm.getSchoolCode());
 		 Profile profile = loginService.authenticateMobileUser(userForm);
 	        logger.info("UserDetails for mobile  :- "+profile);
 		    return profile;  

@@ -28,8 +28,11 @@ public class MobileAssignmentVO {
 	private Integer topicId;
 	private String workSheetLink;
 	private String workSheetMedia;
+	private boolean workSheetAppeared;
+	private String subject;
 	private List<VideoVO> videos;
 	private List<QuestionVO> questions;
 	private String date;
+	private boolean isCurriculam;
 
 }

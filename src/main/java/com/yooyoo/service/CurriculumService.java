@@ -41,4 +41,10 @@ public interface CurriculumService {
 	void saveWorkSheetMedia(Integer topicId, MultipartFile mediaFile) throws Exception;
 
 	ResultVO updateWorkSheetForTopic(Integer topicId, MultipartFile media, String url) throws Exception;
+
+	void updateSubjectmedia(Integer subjectId, MultipartFile media)throws Exception ;
+
+	ResultVO updateThumbNailForTopic(Integer topicId, MultipartFile media)throws Exception ;
+	
+	public byte[] getWorkThumbNailMedia(Integer topicId) throws Exception;
 }

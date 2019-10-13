@@ -17,5 +17,6 @@ public class StudentDTO {
 
 	private Integer studentId;
 	private boolean attendanceStatus;
+	private String studentName;
 	
 }

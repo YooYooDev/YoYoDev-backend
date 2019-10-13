@@ -18,9 +18,11 @@ public class QuestionVO {
 	private String question;
 	private boolean appeared;
 	private String answer;
+	private int assignmentId;
 	private String mediaLink;
 	private String contentType;
 	private String option1;
 	private String option2;
+	private boolean isCurriculam;
 
 }

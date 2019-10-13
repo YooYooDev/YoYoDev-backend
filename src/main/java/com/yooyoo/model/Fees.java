@@ -13,6 +13,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "fees")
+@Table(name = "fees", uniqueConstraints={
+		   @UniqueConstraint(columnNames={"student_id", "school_id"})
+		})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -44,19 +47,14 @@ public class Fees {
 	@JoinColumn(name = "student_id")
 	Student student ;
 	
-	@Column(name = "total_bill_amount")
-	Float totalBillAmount;
-	
-	@Column(name = "paid_bill_amount")
-	Float paidBillAmount;
-	
-	@Column(name = "pending_amount")
-	Float pendingAmount;
-	
 	Float tutionFee;
 	
 	Float transportationFee;
 	
+	Float paidTutionFee;
+	
+    Float paidTransportFee;
+    
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "school_id")
 	private School school;

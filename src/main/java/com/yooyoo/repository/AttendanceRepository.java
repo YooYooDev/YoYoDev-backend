@@ -17,15 +17,23 @@ public interface AttendanceRepository extends CrudRepository<Attendance, Integer
 	@Query("select a from Attendance AS a where a.school.id  = :schoolId and  (CURRENT_DATE-date(attend_date)) = 0")
 	public Set<Attendance> getAttendanses(@Param("schoolId") Integer schoolId);
 	
+	@Query("select a from Attendance AS a where a.school.id  = :schoolId and a.grade.id = :gradeId and  (CURRENT_DATE-date(attend_date)) = 0")
+	public Set<Attendance> getAttendansesBySchoolAndGrade(@Param("schoolId") Integer schoolId,
+			@Param("gradeId") Integer gradeId);
+	
 	
 	@Query("select a from Attendance AS a where a.student.id  = :userId AND a.attend_date BETWEEN :fromDate and :toDate ")
 	public List<Attendance> getAttendansesForUser(@Param("userId") Integer userId, @Param("fromDate") Date fromDate,
 			@Param("toDate") Date toDate);
 	
-	@Query("select a from Attendance AS a where a.school.id  = :schoolId")
-	public List<Attendance> getAttendansesBySchool(@Param("schoolId") Integer schoolId);
+	@Query("select a from Attendance AS a where a.school.id  = :schoolId  AND a.attend_date BETWEEN :fromDate and :toDate ")
+	public List<Attendance> getAttendansesBySchool(@Param("schoolId") Integer schoolId, @Param("fromDate") Date fromDate,
+			@Param("toDate") Date toDate );
 	
 	@Query("select a from Attendance AS a where a.student.id  = :userId")
 	public List<Attendance> getAttendansesByStudent(@Param("userId") Integer userId);
+	
+	@Query("select a from Attendance AS a where a.student.id  = :userId and  (CURRENT_DATE-date(attend_date)) = 0")
+	public List<Attendance> getCurrentDayAttendanceForStudent(@Param("userId") Integer userId);
 
 }

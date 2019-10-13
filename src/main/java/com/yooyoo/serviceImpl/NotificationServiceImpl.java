@@ -45,15 +45,18 @@ public class NotificationServiceImpl implements NotificationService{
 	@Override
 	public void saveNotification(NotificationsVO notificationVO) {
 		Optional<School> school = schoolRepository.findById(notificationVO.getSchoolId());
-		Student student = studentRepository.findById(notificationVO.getStudentId());
+		Student student = null;
+		if (notificationVO.getStudentId() != 0) {
+			student = studentRepository.findById(notificationVO.getStudentId());
+		}
 		Grade grade = gradeRepository.findById(notificationVO.getGradeId());
 		Notifications notification = VOMapper.getNotificationModel(notificationVO);
 		notification.setSchool(school.get());
 		notification.setGrade(grade);
-		notification.setStudent(student);
+		notification.setStudentId(student != null ? student.getId() : 0);
 		notification.setDeleted("N");
 		repository.save(notification);
-		
+
 	}
 
 	@Override
@@ -61,7 +64,13 @@ public class NotificationServiceImpl implements NotificationService{
 		List<NotificationsVO> notifiList = new ArrayList<>();
 		List<Notifications> notis = repository.findAll();
 		for(Notifications not : notis){
-			notifiList.add(VOMapper.getNotificationVO(not));
+			NotificationsVO notVo = VOMapper.getNotificationVO(not);
+			if (not.getStudentId() != 0) {
+				Optional<Student> student = null;
+				student = studentRepository.findById(not.getStudentId());
+				notVo.setStudentName(student.get().getFirst_name());
+			}
+			notifiList.add(notVo);
 		}
 	
 		return notifiList;
@@ -74,26 +83,36 @@ public class NotificationServiceImpl implements NotificationService{
 	}
 
 	@Override
-	public void deleteNotificaitons(Integer id) {
-		// TODO Auto-generated method stub
-		
+	public void deleteNotificaitons(Integer id, boolean delete) {
+		if (delete) {
+			Optional<Notifications> not = repository.findById(id);
+			if(not.isPresent()){
+				repository.delete(not.get());
+			}
+			
+		}
+
 	}
 
 	@Override
-	public List<NotificationsVO> getNotificationsBySchoolANdClass(NotificationsVO notificationVO) {
+	public List<NotificationsVO> getNotificationsBySchoolANdClass(int schoolId) {
 		List<NotificationsVO> notifiList = new ArrayList<>();
 		Set<Notifications> notis = new HashSet();
-		int schoolId = notificationVO.getSchoolId();
 		//int gradeId = notificationVO.getGradeId();
 		//int studentId = notificationVO.getStudentId();
 		//default notifications
-		notis = repository.getNotificationDetailsBySchoolIdAndStudentId(1,1,1);
+		//notis = repository.getNotificationDetailsBySchoolIdAndStudentId(1,1,1);
 		if(schoolId !=0){
 			Set<Notifications> schoolNotis = repository.getNotificationDetailsBySchoolId(schoolId);
 			notis.addAll(schoolNotis);
 		}
 		for(Notifications not : notis){
-			notifiList.add(VOMapper.getNotificationVO(not));
+			NotificationsVO n = VOMapper.getNotificationVO(not); 
+			if(n.getStudentId() != 0){
+				Student s  = studentRepository.findById(n.getStudentId());
+				n.setStudentName(s.getFirst_name());
+			}
+			notifiList.add(n);
 		}
 		return notifiList;
 	}
@@ -137,6 +156,12 @@ public class NotificationServiceImpl implements NotificationService{
 			fBack.setStudent(student);
 			fBack.setMessage(feedback.getMessage());
 			fBack.setSubject(feedback.getSubject());
+			if(feedback.getSchoolId() != 0){
+			fBack.setSchoolId(feedback.getSchoolId());
+			}else{
+				vo.setStatus(400);
+				vo.setMessage("School Id not found for  saving feedback...");
+			}
 			feedbackRepository.save(fBack);
 			vo.setStatus(200);
 			vo.setMessage("Feedback saved sucessfully...");

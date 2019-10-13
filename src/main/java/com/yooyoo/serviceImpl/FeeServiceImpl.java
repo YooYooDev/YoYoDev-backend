@@ -36,13 +36,18 @@ public class FeeServiceImpl implements FeesService {
 
 	@Override
 	public void saveFeesForStudent(FeesVO fees) {
+		if(fees.getStudentId() != 0){
 		Optional<School> school = schoolRepo.findById(fees.getSchoolId());
 		Student student = studentRepo.findById(fees.getStudentId());
 		Fees fee = VOMapper.getFeesModel(fees);
+		if(fees.getId() != null){
+			fee.setId(fees.getId());
+		}
 		fee.setStudent(student);
 		fee.setSchool(school.get());
 		fee.setDeleted("N");
 		repository.save(fee);
+		}
 
 	}
 

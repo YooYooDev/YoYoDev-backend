@@ -43,7 +43,7 @@ public class CredManager implements Serializable{
 	int id;
 	@Column(name = "user_name")
 	String user_name;
-	@Column(name = "email")
+	@Column(name = "email", unique = true)
 	String email;
 	@Column(name = "password")
 	String password;

@@ -11,9 +11,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.yooyoo.model.Category;
+import com.yooyoo.model.Quiz;
 import com.yooyoo.model.Subject;
 import com.yooyoo.model.Topic;
 import com.yooyoo.repository.CategoryRepository;
+import com.yooyoo.repository.QuizRepository;
 import com.yooyoo.repository.SubjectRepository;
 import com.yooyoo.repository.TopicRepository;
 import com.yooyoo.service.CurriculumService;
@@ -33,6 +35,9 @@ public class CurriculumServiceImpl implements CurriculumService {
 
 	@Autowired
 	private TopicRepository topicRepo;
+	
+	@Autowired
+	private QuizRepository quizRepo;
 	
 	@Value("${media.url}")
 	private String mediaUrl;
@@ -107,12 +112,16 @@ public class CurriculumServiceImpl implements CurriculumService {
 	@Override
 	public ResultVO deleteTopic(Integer id) {
 		ResultVO vo = new ResultVO();
-		try{
-		Topic topic = getTopicById(id);
-		topicRepo.delete(topic);
-		vo.setStatus(200);
-		vo.setMessage("Record deleted sucessfully...");
-		}catch(Exception e){
+		try {
+			Topic topic = getTopicById(id);
+			topicRepo.delete(topic);
+			List<Quiz> quizes = quizRepo.getQuizByTopicId(id);
+			for (Quiz q : quizes) {
+				quizRepo.delete(q);
+			}
+			vo.setStatus(200);
+			vo.setMessage("Record deleted sucessfully...");
+		} catch (Exception e) {
 			vo.setStatus(400);
 			vo.setMessage("not able to delete record ..");
 		}
@@ -152,6 +161,10 @@ public class CurriculumServiceImpl implements CurriculumService {
 		if (result != null && !result.isEmpty()) {
 			for (Topic t : result) {
 				t.setWorkSheetImage(null);
+				t.setThumbnailImage(null);
+				Subject subject = t.getSubjects();
+				subject.setMedia(null);
+				t.setSubjects(subject);
 				t.setQuizLink(mediaUrl + "getworksheetlink/" + t.getId()+"/?t="+System.currentTimeMillis());
 			}
 		}
@@ -208,6 +221,19 @@ public class CurriculumServiceImpl implements CurriculumService {
 		}
 		return worksheetImage;
 	}
+	
+	@Override
+	public byte[] getWorkThumbNailMedia(Integer topicId) throws Exception {
+		Topic topic = null;
+		byte[] worksheetImage = null;
+		topic = topicRepo.findById(topicId).get();
+		if(topic != null){
+			worksheetImage = topic.getThumbnailImage();
+		}else{
+			throw new Exception();
+		}
+		return worksheetImage;
+	}
 
 	@Override
 	public ResultVO updateWorkSheetForTopic(Integer topicId, MultipartFile mediaFile, String url) throws Exception {
@@ -240,6 +266,65 @@ public class CurriculumServiceImpl implements CurriculumService {
 
 		return result;
 	}
+	
+	@Override
+	public void updateSubjectmedia(Integer subjectId,  MultipartFile mediaFile) throws Exception {
+		// Normalize file name
+		if(mediaFile != null){
+			String audioName = StringUtils.cleanPath(mediaFile.getOriginalFilename());
+			if (audioName.contains("..")) {
+				throw new Exception("Sorry! Filename contains invalid path sequence ");
+			}
+			
+		}
+		
+		try {
+			if (subjectRepo.findById(subjectId).isPresent() && (mediaFile != null)) {
+				Subject medias = subjectRepo.findById(subjectId).get();
+				if(medias != null){
+					medias.setMedia(mediaFile.getBytes());
+					medias.setContentType(mediaFile.getContentType());
+					subjectRepo.save(medias);
+				}
+				
+			}
+		} catch (Exception ex) {
+			log.error("Could not store file, Please try again!", ex);
+		}
+
+	}
+
+	@Override
+	public ResultVO updateThumbNailForTopic(Integer topicId, MultipartFile mediaFile) throws Exception {
+		ResultVO result = new ResultVO();
+		// Normalize file name
+		if (mediaFile != null) {
+			String fileName = StringUtils.cleanPath(mediaFile.getOriginalFilename());
+			if (fileName.contains("..")) {
+				throw new Exception("Sorry! Filename contains invalid path sequence ");
+			}
+
+		}
+		try {
+			if (topicRepo.findById(topicId).isPresent() && (mediaFile != null)) {
+				Topic topic = topicRepo.findById(topicId).get();
+				if (topic != null) {
+					topic.setThumbnailImage(mediaFile.getBytes());
+					topicRepo.save(topic);
+					result.setStatus(200);
+					result.setMessage("Thumbnail Updated Sucessfully...");
+				}
+
+			}
+		} catch (Exception ex) {
+			result.setStatus(400);
+			result.setMessage("Unbale to update worksheet...");
+			log.error("Could not store file, Please try again!", ex);
+		}
+
+		return result;
+	}
+
 
 
 }

@@ -18,6 +18,7 @@ public class FeedBackVO {
 	private int id;
 	private String subject;
 	private String message;
+	private int schoolId;
 	private int studentId;
 	
 

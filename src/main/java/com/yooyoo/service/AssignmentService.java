@@ -1,5 +1,6 @@
 package com.yooyoo.service;
 
+import java.text.ParseException;
 import java.util.List;
 
 
@@ -15,7 +16,7 @@ import com.yooyoo.vo.VideoVO;
 
 public interface AssignmentService {
 	
-	ResultVO createAssignment(AssignmentVO assignment);
+	ResultVO createAssignment(AssignmentVO assignment) throws ParseException;
 	
 	ResultVO updateAssignment(AssignmentVO assignment);
 	
@@ -29,13 +30,13 @@ public interface AssignmentService {
 	
 	//services  for mobile application
 	
-	List<MobileAssignmentVO> getAssignmentBySchoolAndGrade(Integer schoolId, String grade);
+	List<MobileAssignmentVO> getAssignmentBySchoolAndGrade(Integer schoolId, String grade, String val);
 	
 	List<CurriculamVO> getCurriculamsForSchool(int schoolId, String month); 
 	
 	MobileAssignmentVO finaAssignmentById(int assignMentid);
 
-	List<VideoVO> getAssignmentVideosBySchoolAndGrade(Integer schoolId, String grade);
+	List<VideoVO> getAssignmentVideosBySchoolAndGrade(Integer schoolId, String grade, String val);
 
 	List<QuestionVO> getAssignmentQuestionsBySchoolAndGrade(Integer schoolId, String grade, String token);
 

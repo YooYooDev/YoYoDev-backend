@@ -75,7 +75,9 @@ public class CurriculumController {
 		subject.setUpdatedDate(new Date());
 		try {
 			if (subject.getId() != null) {
-				curriculumService.saveSubject(subject);
+				Subject subjectDB = curriculumService.getSubjectById(subject.getId());
+				subjectDB.setName(subject.getName());
+				curriculumService.saveSubject(subjectDB);
 			} else {
 				return new ResponseEntity<>("failed", HttpStatus.BAD_REQUEST);
 			}
@@ -228,6 +230,28 @@ public class CurriculumController {
 		}
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
+	
+	@PostMapping("/updatevideo/{topicId}")
+	public ResponseEntity<ResultVO> updateVideoThumbNail(@PathVariable("topicId") Integer topicId,
+			@RequestParam("media") MultipartFile media) {
+		logger.info("update video for topic API Method hit " + topicId);
+		ResultVO result = null;
+		if(topicId == null){
+			result = new ResultVO();
+			result.setStatus(400);
+			result.setMessage("Id not present for update topic");
+			return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+		}
+		try {
+			result = curriculumService.updateThumbNailForTopic(topicId, media);
+		} catch (Exception e) {
+			logger.debug("Error While  update the topic Details");
+			logger.error("Error While  update the topic Details" + e.getStackTrace());
+			return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
 	
 	@GetMapping("/getAllTopics")
 	public ResponseEntity<List<Topic>> getAllTopics() {

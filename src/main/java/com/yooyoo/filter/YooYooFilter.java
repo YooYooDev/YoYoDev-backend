@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.yooyoo.service.SessionService;
-import com.yooyoo.serviceImpl.SessionServiceImpl;
 
 @WebFilter(
         urlPatterns = "/mobile/*",

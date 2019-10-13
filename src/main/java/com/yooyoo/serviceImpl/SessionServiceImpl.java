@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.yooyoo.model.SessionManager;
 import com.yooyoo.repository.SessionRepository;
 import com.yooyoo.service.SessionService;
+import com.yooyoo.vo.ResultVO;
 
 @Service
 public class SessionServiceImpl implements SessionService{
@@ -22,6 +23,23 @@ public class SessionServiceImpl implements SessionService{
 		}
 
 		return activeSession;
+	}
+
+	@Override
+	public ResultVO removeSession(String token) {
+		ResultVO vo = new ResultVO();
+		SessionManager session = sessionRepository.getSessionByToken(token);
+		if (session != null) {
+			sessionRepository.delete(session);
+			vo.setSessioninvalidated(true);
+			vo.setStatus(200);
+			vo.setMessage("Loggedout Sucessfully");
+		}else{
+			vo.setSessioninvalidated(false);
+			vo.setStatus(404);
+			vo.setMessage("Not Found");
+		}
+		return vo;
 	}
 
 }

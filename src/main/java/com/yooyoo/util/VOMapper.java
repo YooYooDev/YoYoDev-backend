@@ -57,9 +57,9 @@ public class VOMapper {
 			student.setPassword("password");
 		}
 		int deleted = studentVO.getDeleted();
-		if (deleted == 0) {
+		if (deleted == 1) {
 			student.setDeleted("Y");
-		} else if (deleted == 1) {
+		} else if (deleted == 0) {
 			student.setDeleted("N");
 		}
 		// new fields
@@ -116,9 +116,9 @@ public class VOMapper {
 		studentVO.setParentMobile2(student.getParent_mobile2());
 		String deleted = student.getDeleted();
 		if (deleted.equalsIgnoreCase("N")) {
-			studentVO.setDeleted(1);
-		} else if (deleted.equalsIgnoreCase("Y")) {
 			studentVO.setDeleted(0);
+		} else if (deleted.equalsIgnoreCase("Y")) {
+			studentVO.setDeleted(1);
 		}
 
 		// new fields
@@ -159,7 +159,9 @@ public class VOMapper {
 		notVo.setMessage(not.getMessage());
 		notVo.setSchoolId(not.getSchool() != null ? not.getSchool().getId() : 0);
 		notVo.setGradeId(not.getGrade() != null ? not.getGrade().getId() : 0);
-		notVo.setStudentId(not.getStudent() != null ? not.getStudent().getId() : 0);
+		notVo.setStudentId(not.getStudentId() != null ? not.getStudentId() : 0);
+		notVo.setSchoolName(not.getSchool()!= null?not.getSchool().getName():"SCHOOL");
+		notVo.setGradeName(not.getGrade() != null?not.getGrade().getName():"ALL");
 		notVo.setCreated_at(not.getCreated_at());
 		return notVo;
 	}
@@ -243,9 +245,8 @@ public class VOMapper {
 		fee.setUpdatedd_at(new Date());
 		fee.setTransportationFee(fees.getTransportationFee());
 		fee.setTutionFee(fees.getTutionFee());
-		fee.setTotalBillAmount(fees.getTotalBillAmount());
-		fee.setPaidBillAmount(fees.getPaidBillAmount());
-		fee.setPendingAmount(fees.getPendingAmount());
+		fee.setPaidTransportFee(fees.getPaidTransportFee());
+		fee.setPaidTutionFee(fees.getPaidTutionFee());
 		fee.setId(fees.getId());
 		return fee;
 	}
@@ -257,9 +258,8 @@ public class VOMapper {
 		fee.setUpdatedd_at(new Date());
 		fee.setTransportationFee(fees.getTransportationFee());
 		fee.setTutionFee(fees.getTutionFee());
-		fee.setTotalBillAmount(fees.getTotalBillAmount());
-		fee.setPaidBillAmount(fees.getPaidBillAmount());
-		fee.setPendingAmount(fees.getPendingAmount());
+		fee.setPaidTransportFee(fees.getPaidTransportFee());
+		fee.setPaidTutionFee(fees.getPaidTutionFee());
 		fee.setId(fees.getId());
 		fee.setSchoolId(fees.getSchool() != null ? fees.getSchool().getId() : 0);
 		fee.setStudentId(fees.getStudent() != null ? fees.getStudent().getId() : 0);

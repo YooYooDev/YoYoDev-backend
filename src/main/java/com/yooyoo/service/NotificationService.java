@@ -14,9 +14,9 @@ public interface NotificationService {
 
 	public List<NotificationsVO> getAllNotificationsBySchool();
 	
-	public List<NotificationsVO> getNotificationsBySchoolANdClass(NotificationsVO notificationVO);
+	public List<NotificationsVO> getNotificationsBySchoolANdClass(int id);
 
-	public void deleteNotificaitons(Integer id);
+	public void deleteNotificaitons(Integer id, boolean delete);
 	
 	public List<NotificationsVO> getNotificationByUser(int studentId);
 	

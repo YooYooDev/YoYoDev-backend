@@ -15,6 +15,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class StudentFeeVO {
 	private int id ;
+	private int studentId;
 	private String firstName;
 	private String middleName;
 	private String lastName ;
@@ -23,8 +24,7 @@ public class StudentFeeVO {
 	private String gradeName;
 	private Float tutionFee;
 	private Float transportationFee;
-	private Float totalBillAmount;
-	private Float paidBillAmount;
-	private Float pendingAmount;
+	private Float paidTutionFee;
+	private Float paidTransportFee;
 
 }

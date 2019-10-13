@@ -11,6 +11,8 @@ public interface AttendanceService {
 
 	List<AttendanceVO> getAttandanceDetails(int schoolId);
 	
+	AttendanceVO getAttandanceDetailsBySchoolAndGrade(int schoolId, String grade);
+	
 	
 	MobileAttendanceVO getAttendancesByUseridAndMonth(int userId, Date date, Date date1);
 	

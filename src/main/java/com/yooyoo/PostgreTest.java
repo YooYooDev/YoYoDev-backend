@@ -7,14 +7,18 @@ import java.sql.SQLException;
 public class PostgreTest {
 
 	public static void main(String[] args) throws ClassNotFoundException {
-		Class.forName("org.postgresql.Driver");
+		Class.forName("com.mysql.jdbc.Driver");
 		Connection connection = null;
+		
+		float f = 3.43f;
+		Long l = (long) f;
+		System.out.println(l);
 
 		try {
 
 			connection = DriverManager.getConnection(
-					"jdbc:postgresql://yooyoo.cx79krmljcfu.us-east-2.rds.amazonaws.com:5432/YooYoo", "YooYoo",
-					"YOOYOO_123");
+					"jdbc:mysql://localhost:3306/yooyoo", "root",
+					"tiger");
 			System.out.println(connection);
 
 		} catch (SQLException e) {

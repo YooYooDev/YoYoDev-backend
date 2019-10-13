@@ -24,5 +24,6 @@ public class ResultVO implements Serializable{
 	private List<String> messge;
 	private String message;
 	private int status;
+	private boolean sessioninvalidated = false;
 	
 }

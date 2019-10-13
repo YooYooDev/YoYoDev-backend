@@ -15,6 +15,10 @@ public interface QuizService {
 	List<QuizVO> getQuizByTopic(Integer TopicId);
 	
 	ResultVO saveResult(List<Result> results);
+
+	ResultVO deleteQuiz(Integer id);
+
+	ResultVO deleteResults();
 	
 	
 

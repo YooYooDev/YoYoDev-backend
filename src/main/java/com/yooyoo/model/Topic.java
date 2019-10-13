@@ -61,8 +61,12 @@ public class Topic {
 	private String worksheetLink;
 	
 	@Lob
-	@Column(length=100000)
+	@Column(length=1048576)
 	private byte[] workSheetImage;
+	
+	@Lob
+	@Column(length=1048576)
+	private byte[] thumbnailImage;
 	
 	
 	@ManyToOne

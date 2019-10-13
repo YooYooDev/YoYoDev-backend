@@ -1,6 +1,7 @@
 package com.yooyoo.serviceImpl;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,16 +23,17 @@ import com.yooyoo.model.School;
 import com.yooyoo.model.SessionManager;
 import com.yooyoo.model.Subject;
 import com.yooyoo.model.Topic;
+import com.yooyoo.model.Tracker;
 import com.yooyoo.repository.AssignmentRepository;
 import com.yooyoo.repository.GradeRepository;
 import com.yooyoo.repository.QuestionMediaRepository;
 import com.yooyoo.repository.ResultRepository;
 import com.yooyoo.repository.SessionRepository;
+import com.yooyoo.repository.TrackerRepository;
 import com.yooyoo.service.AssignmentService;
 import com.yooyoo.service.CurriculumService;
 import com.yooyoo.service.QuizService;
 import com.yooyoo.service.SchoolService;
-import com.yooyoo.service.SessionService;
 import com.yooyoo.util.VOMapper;
 import com.yooyoo.vo.AssignmentVO;
 import com.yooyoo.vo.CurriculamVO;
@@ -62,32 +64,71 @@ public class AssignmentServiceImpl implements AssignmentService {
 
 	@Autowired
 	QuizService quizService;
-	
+
 	@Autowired
 	SessionRepository sessionRepository;
-	
+
 	@Autowired
 	ResultRepository resultRepository;
+	
+	@Autowired
+	TrackerRepository trackerrepository;
 
 	@Value("${media.url}")
 	private String mediaUrl;
 
 	@Override
-	public ResultVO createAssignment(AssignmentVO assignmentVO) {
+	public ResultVO createAssignment(AssignmentVO assignmentVO) throws ParseException {
 		ResultVO result = new ResultVO();
 		DateFormat formatter;
 		Date date = null;
-		Date toDate= null;
+		Date toDate = null;
 		if (assignmentVO != null) {
-			try {
-				Topic topic = curriculamService.getTopicById(assignmentVO.getTopicId());
-				Subject subject = curriculamService.getSubjectById(assignmentVO.getSubjectId());
-				School school = schoolService.getSchoolById(assignmentVO.getSchoolId());
-				if (assignmentVO.getGrade().equalsIgnoreCase("all")) {
-					Iterable<Grade> itr = gradeRepo.findAll();
-					for (Grade g : itr) {
-						Assignment assignment = new Assignment();
-						assignment.setGrade(g);
+			if (assignmentVO.getDate() == null && assignmentVO.getSchoolId() == null) {
+				Assignment ass = assignmentRepository.findById(assignmentVO.getId()).get();
+				formatter = new SimpleDateFormat("dd-MMM-yy");
+				Date dateUpdate = formatter.parse(assignmentVO.getToDate());
+				ass.setToDate(dateUpdate);
+				assignmentRepository.save(ass);
+				result.setStatus(200);
+				result.setMessage("Assignment updated Sucessfully...");
+
+			} else {
+				try {
+					Topic topic = curriculamService.getTopicById(assignmentVO.getTopicId());
+					Subject subject = curriculamService.getSubjectById(assignmentVO.getSubjectId());
+					School school = schoolService.getSchoolById(assignmentVO.getSchoolId());
+					if (assignmentVO.getGrade().equalsIgnoreCase("all")) {
+						Iterable<Grade> itr = gradeRepo.findAll();
+						for (Grade g : itr) {
+							Assignment assignment = new Assignment();
+							assignment.setGrade(g);
+							assignment.setTopic(topic);
+							assignment.setSubject(subject);
+							assignment.setSchool(school);
+							formatter = new SimpleDateFormat("dd-MMM-yy");
+							date = formatter.parse(assignmentVO.getDate());
+							assignment.setDate(date);
+							if (assignmentVO.getToDate() != null) {
+								toDate = formatter.parse(assignmentVO.getToDate());
+								assignment.setToDate(toDate);
+							}
+							assignmentRepository.save(assignment);
+						}
+					} else {
+						Grade grade = gradeRepo.getGradebyName(assignmentVO.getGrade());
+						Assignment assignment = null;
+						if (assignmentVO.getId() != null) {
+							Optional<Assignment> optAssignment = assignmentRepository.findById(assignmentVO.getId());
+							if (optAssignment.isPresent()) {
+								assignment = optAssignment.get();
+							} else {
+								assignment = new Assignment();
+							}
+						} else {
+							assignment = new Assignment();
+						}
+						assignment.setGrade(grade);
 						assignment.setTopic(topic);
 						assignment.setSubject(subject);
 						assignment.setSchool(school);
@@ -100,42 +141,18 @@ public class AssignmentServiceImpl implements AssignmentService {
 						}
 						assignmentRepository.save(assignment);
 					}
-				} else {
-					Grade grade = gradeRepo.getGradebyName(assignmentVO.getGrade());
-					Assignment assignment = null;
-					if (assignmentVO.getId() != null) {
-						Optional<Assignment> optAssignment = assignmentRepository.findById(assignmentVO.getId());
-						if (optAssignment.isPresent()) {
-							assignment = optAssignment.get();
-						} else {
-							assignment = new Assignment();
-						}
-					} else {
-						assignment = new Assignment();
-					}
-					assignment.setGrade(grade);
-					assignment.setTopic(topic);
-					assignment.setSubject(subject);
-					assignment.setSchool(school);
-					formatter = new SimpleDateFormat("dd-MMM-yy");
-					date = formatter.parse(assignmentVO.getDate());
-					assignment.setDate(date);
-					if (assignmentVO.getToDate() != null) {
-						toDate = formatter.parse(assignmentVO.getToDate());
-						assignment.setToDate(toDate);
-					}
-					assignmentRepository.save(assignment);
-				}
 
-				result.setStatus(200);
-				result.setMessage("Assignment Saved Sucessfully...");
-			} catch (DataIntegrityViolationException e) {
-				result.setStatus(400);
-				result.setMessage("Duplicate Record.....");
-			} catch (Exception e) {
-				result.setStatus(400);
-				result.setMessage("Unable to save Assignment...");
+					result.setStatus(200);
+					result.setMessage("Assignment Saved Sucessfully...");
+				} catch (DataIntegrityViolationException e) {
+					result.setStatus(400);
+					result.setMessage("Duplicate Record.....");
+				} catch (Exception e) {
+					result.setStatus(400);
+					result.setMessage("Unable to save Assignment...");
+				}
 			}
+
 		}
 		return result;
 	}
@@ -167,6 +184,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 		Iterable<Assignment> assigns = assignmentRepository.findAll();
 		for (Assignment a : assigns) {
 			a.getTopic().setWorkSheetImage(null);
+			a.getTopic().setThumbnailImage(null);
 			assignments.add(a);
 		}
 		return assignments;
@@ -182,7 +200,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 		}
 		return assignments;
 	}
-	
+
 	public List<Assignment> getAssignmentBySchoolAndMonth(Integer id, String month) {
 		List<Assignment> assignments = new ArrayList<>();
 		Iterable<Assignment> assigns = assignmentRepository.getAssignmentsBySchoolAndMonth(id, month);
@@ -198,23 +216,31 @@ public class AssignmentServiceImpl implements AssignmentService {
 	}
 
 	@Override
-	public List<MobileAssignmentVO> getAssignmentBySchoolAndGrade(Integer schoolId, String grade) {
+	public List<MobileAssignmentVO> getAssignmentBySchoolAndGrade(Integer schoolId, String grade, String token) {
 		List<Assignment> assignments = null;
 		List<MobileAssignmentVO> assignMentVos = new ArrayList<>();
 		Grade gradeEntiry = gradeRepo.getGradebyName(grade);
+		SessionManager session = sessionRepository.getSessionByToken(token);
 		try {
 			assignments = assignmentRepository.getAssignmentsBySchoolAndGrade(schoolId, gradeEntiry.getId());
 			for (Assignment assignment : assignments) {
 				MobileAssignmentVO assignmentVO = VOMapper.getAssignmentVO(assignment);
-				assignmentVO.setWorkSheetMedia(mediaUrl + "getworksheetlink/" + assignmentVO.getTopicId()+"/?t="+System.currentTimeMillis());
+				assignmentVO.setAssignmentId(assignment.getId());
+				assignmentVO.setWorkSheetMedia(mediaUrl + "getworksheetlink/" + assignmentVO.getTopicId() + "/?t="
+						+ System.currentTimeMillis());
+				assignmentVO
+						.setWorkSheetAppeared(hasAppeared(session, assignment.getId(), TrackerServiceImpl.WORKSHEET));
+				assignmentVO.setSubject(assignment.getTopic().getSubjects().getName());
+				assignmentVO.setCurriculam(false);
 				assignMentVos.add(assignmentVO);
+				
 			}
 		} catch (Exception e) {
 			logger.error("internal seerver error" + e);
 		}
 		return assignMentVos;
 	}
-	
+
 	// for curricullam section
 	@Override
 	public List<MobileAssignmentVO> getAssignmentByAssignmentId(Integer assignmentId) {
@@ -222,11 +248,15 @@ public class AssignmentServiceImpl implements AssignmentService {
 		List<MobileAssignmentVO> assignMentVos = new ArrayList<>();
 		try {
 			assignment = assignmentRepository.findById(assignmentId).get();
-			if(assignment != null) {
+			if (assignment != null) {
 				MobileAssignmentVO assignmentVO = VOMapper.getAssignmentVO(assignment);
-				assignmentVO.setWorkSheetMedia(mediaUrl + "getworksheetlink/" + assignmentVO.getTopicId()+"/?t="+System.currentTimeMillis());
+				assignmentVO.setCurriculam(true);
+				assignmentVO.setAssignmentId(assignment.getId());
+				assignmentVO.setSubject(assignment.getTopic().getSubjects().getName());
+				assignmentVO.setWorkSheetMedia(mediaUrl + "getworksheetlink/" + assignmentVO.getTopicId() + "/?t="
+						+ System.currentTimeMillis());
 				assignMentVos.add(assignmentVO);
-			}else{
+			} else {
 				logger.info("getAssignmentdetails by id returned empty...");
 			}
 		} catch (Exception e) {
@@ -243,11 +273,14 @@ public class AssignmentServiceImpl implements AssignmentService {
 			for (Assignment ass : assignments) {
 				CurriculamVO cur = new CurriculamVO();
 				cur.setAssignmentId(ass.getId());
-				cur.setSubject(ass.getSubject().getName());
+				cur.setSubject(ass.getTopic().getSubjects().getName());
 				cur.setTopicName(ass.getTopic().getName());
+				cur.setSubjectMedia(
+						mediaUrl + "getsubjectmedia/" + ass.getSubject().getId() + "/?t=" + System.currentTimeMillis());
 				DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy");
 				String strDate = dateFormat.format(ass.getDate());
 				cur.setDate(strDate);
+				cur.setCurriculam(true);
 				curries.add(cur);
 			}
 		}
@@ -262,6 +295,9 @@ public class AssignmentServiceImpl implements AssignmentService {
 		Optional<Assignment> assignment = assignmentRepository.findById(assignMentid);
 		if (assignment != null) {
 			assignmentVO = VOMapper.getAssignmentVO(assignment.get());
+			assignmentVO.setCurriculam(true);
+			assignmentVO.setSubject(assignment.get().getTopic().getSubjects().getName());
+			assignmentVO.setAssignmentId(assignment.get().getId());
 			VideoVO vo = VOMapper.getVideoVO(assignment.get().getTopic());
 			videos.add(vo);
 			assignmentVO.setVideos(videos);
@@ -273,7 +309,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 					QuestionMedia med = questionMediaRepo.findByQuestionId(qs.getId());
 					if (med != null) {
 						qs.setContentType(med.getContentType());
-						qs.setMediaLink(mediaUrl + "getMedia/" + qs.getId()+"/?t="+System.currentTimeMillis());
+						qs.setMediaLink(mediaUrl + "getMedia/" + qs.getId() + "/?t=" + System.currentTimeMillis());
 					}
 				}
 				assignmentVO.setQuestions(questions);
@@ -283,14 +319,24 @@ public class AssignmentServiceImpl implements AssignmentService {
 	}
 
 	@Override
-	public List<VideoVO> getAssignmentVideosBySchoolAndGrade(Integer schoolId, String grade) {
+	public List<VideoVO> getAssignmentVideosBySchoolAndGrade(Integer schoolId, String grade, String token) {
 		List<Assignment> assignments = null;
 		List<VideoVO> videos = new ArrayList<>();
 		Grade gradeEntiry = gradeRepo.getGradebyName(grade);
+		SessionManager session = sessionRepository.getSessionByToken(token);
 		try {
 			assignments = assignmentRepository.getAssignmentsBySchoolAndGrade(schoolId, gradeEntiry.getId());
 			for (Assignment assignment : assignments) {
 				VideoVO vo = VOMapper.getVideoVO(assignment.getTopic());
+				byte[] vidMed = curriculamService.getWorkThumbNailMedia(assignment.getTopic().getId());
+				if (vidMed != null) {
+					vo.setVideoThumbnail(mediaUrl + "getthumbnaillink/" + assignment.getTopic().getId() + "/?t="
+							+ System.currentTimeMillis());
+				}
+				vo.setHasViewed(hasAppeared(session, assignment.getId(), TrackerServiceImpl.VIDEO));
+				vo.setSubject(assignment.getTopic().getSubjects().getName());
+				vo.setAssignmentId(assignment.getId());
+				vo.setCurriculam(false);
 				videos.add(vo);
 			}
 		} catch (Exception e) {
@@ -298,8 +344,8 @@ public class AssignmentServiceImpl implements AssignmentService {
 		}
 		return videos;
 	}
-	
-	//  videos for curricullam
+
+	// videos for curricullam
 	@Override
 	public List<VideoVO> getVideosByAssignmentId(Integer assignmentId) {
 		Assignment assignment = null;
@@ -308,8 +354,16 @@ public class AssignmentServiceImpl implements AssignmentService {
 			assignment = assignmentRepository.findById(assignmentId).get();
 			if (assignment != null) {
 				VideoVO vo = VOMapper.getVideoVO(assignment.getTopic());
+				byte[] vidMed = curriculamService.getWorkThumbNailMedia(assignment.getTopic().getId());
+				if (vidMed != null) {
+					vo.setVideoThumbnail(mediaUrl + "getthumbnaillink/" + assignment.getTopic().getId() + "/?t="
+							+ System.currentTimeMillis());
+				}
+				vo.setCurriculam(true);
+				vo.setSubject(assignment.getTopic().getSubjects().getName());
+				vo.setAssignmentId(assignment.getId());
 				videos.add(vo);
-			}else{
+			} else {
 				logger.info("No videos found for given assignment");
 			}
 		} catch (Exception e) {
@@ -332,7 +386,9 @@ public class AssignmentServiceImpl implements AssignmentService {
 					List<QuestionVO> q = quizs.get(0).getQuestions();
 					questions.addAll(q);
 					for (QuestionVO qs : questions) {
+						qs.setAssignmentId(assignment.getId());
 						qs.setAppeared(isAppeared(session, qs));
+						qs.setCurriculam(false);
 						QuestionMedia med = questionMediaRepo.findByQuestionId(qs.getId());
 						if (med != null) {
 							qs.setContentType(med.getContentType());
@@ -346,6 +402,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 		}
 		return questions;
 	}
+
 	// questions for curriculam
 	@Override
 	public List<QuestionVO> getQuestionsByAssignmentId(Integer assignmentId, String token) {
@@ -361,14 +418,15 @@ public class AssignmentServiceImpl implements AssignmentService {
 					questions.addAll(q);
 					for (QuestionVO qs : questions) {
 						qs.setAppeared(isAppeared(session, qs));
+						qs.setCurriculam(true);
 						QuestionMedia med = questionMediaRepo.findByQuestionId(qs.getId());
 						if (med != null) {
 							qs.setContentType(med.getContentType());
-							qs.setMediaLink(mediaUrl + "getMedia/" + qs.getId()+"/?t="+System.currentTimeMillis());
+							qs.setMediaLink(mediaUrl + "getMedia/" + qs.getId() + "/?t=" + System.currentTimeMillis());
 						}
 					}
 				}
-			}else{
+			} else {
 				logger.info("quiz not found for given assignment");
 			}
 		} catch (Exception e) {
@@ -376,7 +434,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 		}
 		return questions;
 	}
-	
+
 	private boolean isAppeared(SessionManager session, QuestionVO qs) {
 		List<Result> results = resultRepository.getResultByStudentId(session.getUserId());
 		return results.stream().anyMatch(rs -> (rs.getQuestionId() == qs.getId()));
@@ -398,6 +456,15 @@ public class AssignmentServiceImpl implements AssignmentService {
 			}
 		}
 		return quizs;
+	}
+
+	private boolean hasAppeared(SessionManager session, Integer id, String type) {
+		boolean hasAppeared = false;
+        List<Tracker> t = trackerrepository.getTrackerModelForStudent(session.getUserId(), id, type);
+        if(t != null && t.size()>0){
+        	hasAppeared = true;
+        }
+		return hasAppeared;
 	}
 
 }

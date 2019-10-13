@@ -21,25 +21,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "quiz",  uniqueConstraints={
-		   @UniqueConstraint(columnNames={"topic_id", "quiz_name"})
-		})
+@Table(name = "quiz", uniqueConstraints = { @UniqueConstraint(columnNames = { "topic_id", "quiz_name" }) })
 @Getter
 @Setter
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Quiz {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "quiz_id_seq")
 	@SequenceGenerator(name = "quiz_id_seq", sequenceName = "quiz_id_seq", allocationSize = 1)
 	private Integer id;
 	private Integer topic_id;
-	@Column(unique=true)
+	@Column(unique = true)
 	private String quiz_name;
 	@OneToMany
 	private List<Question> questions;
-	
+
 }

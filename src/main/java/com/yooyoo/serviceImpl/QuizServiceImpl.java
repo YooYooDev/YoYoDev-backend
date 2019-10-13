@@ -113,4 +113,35 @@ public class QuizServiceImpl implements QuizService {
 		return result;
 	}
 
+	@Override
+	public ResultVO deleteQuiz(Integer id) {
+		Optional<Quiz> quiz = quizRepository.findById(id);
+		ResultVO vo = new ResultVO();
+		if(quiz.isPresent()){
+			Quiz q = quiz.get();
+			quizRepository.delete(q);
+			vo.setStatus(200);
+			vo.setMessage("Quiz has been deleted sucessfully");
+		}else{
+			vo.setStatus(400);
+			vo.setMessage("Quiz not found for delete");
+		}
+		return vo;
+	}
+	
+	@Override
+	public ResultVO deleteResults() {
+		ResultVO result = new ResultVO();
+		try {
+			resultRepository.deleteAll();
+			result.setStatus(200);
+			result.setMessage("Results have been deleted sucessfully...");
+		} catch (Exception e) {
+			result.setStatus(400);
+			result.setMessage("No results found to delete...");
+		}
+
+		return result;
+	}
+
 }

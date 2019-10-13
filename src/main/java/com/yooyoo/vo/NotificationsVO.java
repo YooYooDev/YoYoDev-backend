@@ -21,6 +21,9 @@ public class NotificationsVO {
 	private String message;
 	private int  schoolId;
 	private int studentId;
+	private String studentName;
+	private String gradeName;
+	private String schoolName;
 	private int gradeId;
 	private Date created_at;
 	private Date updatedd_at;

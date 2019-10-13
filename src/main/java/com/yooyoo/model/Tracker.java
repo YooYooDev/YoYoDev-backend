@@ -6,16 +6,12 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -24,36 +20,39 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "feedback")
+@Table(name = "tracker")
 @Getter
 @Setter
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class FeedBack {
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "feedback_id_seq")
-	@SequenceGenerator(name = "feedback_id_seq", sequenceName = "feedback_id_seq", allocationSize = 1)
-	private Integer id;
-	
-	private String subject;
-	
-	private String message;
-	
-	private  Integer schoolId;
+public class Tracker {
 
-	@OneToOne
-	@JoinColumn(name = "student_id")
-	private Student student;
-		
-	@Column(name="created_date")
+	@Id
+	@GeneratedValue
+	private Integer id;
+
+	@Column(name = "student_id")
+	private Integer studentId;
+
+	@Column(name = "assignment_id")
+	private Integer assignmentId;
+	
+	private Integer schoolId;
+
+	@Column(name = "subject")
+	private String subject;
+
+	@Column(name = "tracking_type")
+	private String trackingType;
+
+	@Column(name = "created_date")
 	private Date createdDate;
 
-	@Column(name="updated_date")
+	@Column(name = "updated_date")
 	private Date updatedDate;
-	
+
 	@PrePersist
 	@PreUpdate
 	public void auditTrail() {
@@ -63,7 +62,7 @@ public class FeedBack {
 		}
 		setUpdatedAt(now);
 	}
-	
+
 	/**
 	 * @param createdAt
 	 *            the createdAt to set

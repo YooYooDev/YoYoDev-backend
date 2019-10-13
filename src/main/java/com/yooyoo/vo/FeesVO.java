@@ -21,9 +21,8 @@ public class FeesVO {
 	private int studentId;
 	private Float tutionFee;
 	private Float transportationFee;
-	private Float totalBillAmount;
-	private Float paidBillAmount;
-	private Float pendingAmount;
+	private Float paidTutionFee;
+	private Float paidTransportFee;
 	private int schoolId;
 	private Date created_at;
 	private Date updatedd_at;
