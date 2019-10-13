@@ -1,5 +1,6 @@
 package com.yooyoo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -16,7 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yooyoo.service.FeesService;
+import com.yooyoo.service.StudentService;
+import com.yooyoo.util.VOMapper;
 import com.yooyoo.vo.FeesVO;
+import com.yooyoo.vo.StudentFeeVO;
+import com.yooyoo.vo.StudentVO;
 
 @RestController
 @RequestMapping(value = { "/fees" })
@@ -26,6 +31,9 @@ public class FeesController {
 
 	@Autowired
 	public FeesService feeService;
+	
+	@Autowired
+	StudentService studentService;
 	
 	@PostMapping("/save")
 	public ResponseEntity<Boolean> saveFees(@RequestBody FeesVO fees) {
@@ -47,7 +55,7 @@ public class FeesController {
 
 		try {
 			if (fees.getId() != null) {
-				feeService.saveFeesForStudent(fees);
+				feeService.updateFees(fees);
 			} else {
 				throw new NullPointerException();
 			}
@@ -80,7 +88,7 @@ public class FeesController {
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 	
-	@GetMapping("/getFeesbySchol/{schoolId}")
+	@GetMapping("/getFeesbySchool/{schoolId}")
 	public ResponseEntity<List<FeesVO>> getFeesBySchool(@PathVariable("schoolId") int  schoolId) {
 		logger.info("get Fees by school Method hit " + schoolId);
         List<FeesVO> fees = null;
@@ -97,6 +105,30 @@ public class FeesController {
 			return new ResponseEntity<>(fees, HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>(fees, HttpStatus.OK);
+	}
+	
+	@GetMapping("/getAllStudents/{schoolId}")
+	public List<FeesVO> getAllStudentBySchool(@PathVariable("schoolId") int schoolId) {
+		List<StudentVO> students = studentService.getAllStudentsBySchool(schoolId);
+		List<FeesVO> studentFees = new ArrayList<>();
+		logger.info("UserDetailas :- " + schoolId);
+		logger.info("Student infos are fetched...");
+		for(StudentVO student:students){
+			FeesVO fee = null;
+			StudentFeeVO feeVO1 = VOMapper.getStudentFeeVO(student);
+			fee = feeService.getFeesByStudent(feeVO1);
+			if(fee == null){
+				fee = new FeesVO();
+				fee.setStudentName(feeVO1.getFirstName());
+				fee.setSchoolId(feeVO1.getSchoolId());
+				fee.setStudentId(feeVO1.getId());
+				fee.setGradeName(feeVO1.getGradeName());
+				
+			}
+			
+			studentFees.add(fee);
+		}
+		return studentFees;
 	}
 
 

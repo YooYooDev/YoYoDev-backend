@@ -12,6 +12,7 @@ import com.yooyoo.model.CredManager;
 import com.yooyoo.service.LoginService;
 import com.yooyoo.vo.LoginVO;
 import com.yooyoo.vo.Profile;
+import com.yooyoo.vo.ResultVO;
 import com.yooyoo.vo.SchoolInfo;
 import com.yooyoo.vo.UserInfo;
 
@@ -65,11 +66,19 @@ public class LoginController {
 		 return p;
 	 }
 	 
-	 @RequestMapping(value = "/yooyoo/android/login", method = RequestMethod.POST)
+	 @RequestMapping(value = "/yooyoo/mobilelogin", method = RequestMethod.POST)
 	 public Profile loginMobileUser(@RequestBody LoginVO userForm) {
+		 logger.info("Loggedin User details  :- "+userForm.getEmail()+":"+userForm.getPassword()+":"+userForm.getSchoolCode());
 		 Profile profile = loginService.authenticateMobileUser(userForm);
 	        logger.info("UserDetails for mobile  :- "+profile);
 		    return profile;  
+		}
+	 
+	 @RequestMapping(value = "/yooyoo/forgotpassword", method = RequestMethod.POST)
+	 public ResultVO sendEmail(@RequestBody LoginVO userForm) {
+		 ResultVO result = loginService.sendForgotPasswordEmail(userForm);
+	        logger.info("UserDetails for mobile  :- "+result.getMessage());
+		    return result;  
 		}
 
 

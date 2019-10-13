@@ -1,5 +1,6 @@
 package com.yooyoo.util;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,46 +10,59 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.yooyoo.model.Assignment;
 import com.yooyoo.model.CredManager;
 import com.yooyoo.model.Fees;
 import com.yooyoo.model.Grade;
 import com.yooyoo.model.Notifications;
+import com.yooyoo.model.Question;
+import com.yooyoo.model.Quiz;
 import com.yooyoo.model.School;
 import com.yooyoo.model.Student;
 import com.yooyoo.model.Ticket;
+import com.yooyoo.model.Topic;
+import com.yooyoo.vimeo.pojo.Vimeo;
 import com.yooyoo.vo.CredManagerVO;
 import com.yooyoo.vo.FeesVO;
 import com.yooyoo.vo.GradeVO;
+import com.yooyoo.vo.MobileAssignmentVO;
 import com.yooyoo.vo.NotificationsVO;
+import com.yooyoo.vo.QuestionVO;
+import com.yooyoo.vo.QuizVO;
 import com.yooyoo.vo.SchoolInfo;
+import com.yooyoo.vo.StudentFeeVO;
 import com.yooyoo.vo.StudentVO;
 import com.yooyoo.vo.TicketVO;
+import com.yooyoo.vo.VideoVO;
 
 public class VOMapper {
-	
+
 	static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-	
-	
-	public static Student getStudent(StudentVO studentVO){
+
+	public static Student getStudent(StudentVO studentVO) {
 		Student student = new Student();
 		student.setId(studentVO.getId());
 		student.setFirst_name(studentVO.getFirstName());
 		student.setMiddle_name(studentVO.getMiddleName());
 		student.setLast_name(studentVO.getLastName());
 		student.setRole("STUDENT");
-		//student.setSchool(getSchool(studentVO.getSchool()));
+		// student.setSchool(getSchool(studentVO.getSchool()));
 		student.setP_email(studentVO.getPrimaryEmail());
 		student.setS_email(studentVO.getSecondaryEmail());
 		student.setParent_mobile1(studentVO.getParentMobile1());
 		student.setParent_mobile2(studentVO.getParentMobile2());
-		student.setPassword("password");
+		if (studentVO.getPassword() != null) {
+			student.setPassword(studentVO.getPassword());
+		} else {
+			student.setPassword("password");
+		}
 		int deleted = studentVO.getDeleted();
-		if (deleted == 0) {
+		if (deleted == 1) {
 			student.setDeleted("Y");
-		} else if (deleted == 1) {
+		} else if (deleted == 0) {
 			student.setDeleted("N");
 		}
-		//new fields
+		// new fields
 		try {
 			student.setDob(simpleDateFormat.parse(studentVO.getDob()));
 		} catch (ParseException e) {
@@ -66,7 +80,7 @@ public class VOMapper {
 		student.setState(studentVO.getState());
 		return student;
 	}
-	
+
 	public static School getSchool(SchoolInfo schoolVO) {
 		School school = new School();
 		school.setId(schoolVO.getId());
@@ -95,15 +109,16 @@ public class VOMapper {
 		studentVO.setLastName(student.getLast_name());
 		studentVO.setMiddleName(student.getMiddle_name());
 		studentVO.setRole("STUDENT");
+		studentVO.setPassword(student.getPassword());
 		studentVO.setPrimaryEmail(student.getP_email());
 		studentVO.setSecondaryEmail(student.getS_email());
 		studentVO.setParentMobile1(student.getParent_mobile1());
 		studentVO.setParentMobile2(student.getParent_mobile2());
 		String deleted = student.getDeleted();
 		if (deleted.equalsIgnoreCase("N")) {
-			studentVO.setDeleted(1);
-		} else if (deleted.equalsIgnoreCase("Y")) {
 			studentVO.setDeleted(0);
+		} else if (deleted.equalsIgnoreCase("Y")) {
+			studentVO.setDeleted(1);
 		}
 
 		// new fields
@@ -142,9 +157,11 @@ public class VOMapper {
 		notVo.setId(not.getId());
 		notVo.setHeader(not.getHeader());
 		notVo.setMessage(not.getMessage());
-		notVo.setSchoolId(not.getSchool() != null? not.getSchool().getId():0);
-		notVo.setGradeId(not.getGrade() != null ? not.getGrade().getId():0);
-		notVo.setStudentId(not.getStudent() !=null? not.getStudent().getId():0);
+		notVo.setSchoolId(not.getSchool() != null ? not.getSchool().getId() : 0);
+		notVo.setGradeId(not.getGrade() != null ? not.getGrade().getId() : 0);
+		notVo.setStudentId(not.getStudentId() != null ? not.getStudentId() : 0);
+		notVo.setSchoolName(not.getSchool()!= null?not.getSchool().getName():"SCHOOL");
+		notVo.setGradeName(not.getGrade() != null?not.getGrade().getName():"ALL");
 		notVo.setCreated_at(not.getCreated_at());
 		return notVo;
 	}
@@ -188,7 +205,7 @@ public class VOMapper {
 		vo.setSubject(tkt.getSubject());
 		vo.setMessage(tkt.getMessage());
 		vo.setResolution(tkt.getResolution());
-		vo.setSchoolId(tkt.getSchoolId() != null?tkt.getSchoolId().getId():0);
+		vo.setSchoolId(tkt.getSchoolId() != null ? tkt.getSchoolId().getId() : 0);
 		return vo;
 	}
 
@@ -216,8 +233,8 @@ public class VOMapper {
 		manager.setId(credVo.getId());
 		manager.setRole(credVo.getRole().getName());
 		School school = credVo.getSchool();
-		manager.setSchoolId( school != null ? credVo.getSchool().getId() : 0);
-		manager.setSchoolName( school != null ? credVo.getSchool().getName() : null);
+		manager.setSchoolId(school != null ? credVo.getSchool().getId() : 0);
+		manager.setSchoolName(school != null ? credVo.getSchool().getName() : null);
 		return manager;
 	}
 
@@ -226,9 +243,10 @@ public class VOMapper {
 		fee.setStudentName(fees.getStudentName());
 		fee.setCreated_at(new Date());
 		fee.setUpdatedd_at(new Date());
-		fee.setTotalBillAmount(fees.getTotalBillAmount());
-		fee.setPaidBillAmount(fees.getPaidBillAmount());
-		fee.setPendingAmount(fees.getPendingAmount());
+		fee.setTransportationFee(fees.getTransportationFee());
+		fee.setTutionFee(fees.getTutionFee());
+		fee.setPaidTransportFee(fees.getPaidTransportFee());
+		fee.setPaidTutionFee(fees.getPaidTutionFee());
 		fee.setId(fees.getId());
 		return fee;
 	}
@@ -238,9 +256,10 @@ public class VOMapper {
 		fee.setStudentName(fees.getStudentName());
 		fee.setCreated_at(new Date());
 		fee.setUpdatedd_at(new Date());
-		fee.setTotalBillAmount(fees.getTotalBillAmount());
-		fee.setPaidBillAmount(fees.getPaidBillAmount());
-		fee.setPendingAmount(fees.getPendingAmount());
+		fee.setTransportationFee(fees.getTransportationFee());
+		fee.setTutionFee(fees.getTutionFee());
+		fee.setPaidTransportFee(fees.getPaidTransportFee());
+		fee.setPaidTutionFee(fees.getPaidTutionFee());
 		fee.setId(fees.getId());
 		fee.setSchoolId(fees.getSchool() != null ? fees.getSchool().getId() : 0);
 		fee.setStudentId(fees.getStudent() != null ? fees.getStudent().getId() : 0);
@@ -249,9 +268,9 @@ public class VOMapper {
 			fee.setGradeName(grade != null ? grade.getName() : null);
 		}
 
-		if("Y".equalsIgnoreCase(fees.getDeleted())){
-		fee.setDeleted(0);
-		}else if(("N".equalsIgnoreCase(fees.getDeleted()))){
+		if ("Y".equalsIgnoreCase(fees.getDeleted())) {
+			fee.setDeleted(0);
+		} else if (("N".equalsIgnoreCase(fees.getDeleted()))) {
 			fee.setDeleted(1);
 		}
 		System.out.println(fees.getImage1());
@@ -259,6 +278,92 @@ public class VOMapper {
 		fee.setImage1(image);
 		return fee;
 	}
+	/*
+	 * public static Assignment getAssignment(AssignmentVO assignmentVO) {
+	 * Assignment assignment = new Assignment(); return null; }
+	 */
 
-	
+	public static MobileAssignmentVO getAssignmentVO(Assignment assignment) {
+		MobileAssignmentVO mobileAssignment = new MobileAssignmentVO();
+		mobileAssignment.setAssignmentId(assignment.getId());
+		Topic topic = assignment.getTopic();
+		if (topic != null) {
+			mobileAssignment.setWorkSheetLink(topic.getWorksheetLink());
+			mobileAssignment.setTopicId(topic.getId());
+		}
+		DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy");
+		String strDate = dateFormat.format(assignment.getDate());
+		mobileAssignment.setDate(strDate);
+		mobileAssignment.setDescription(assignment.getSubject().getName() + " : " + assignment.getTopic().getName());
+
+		return mobileAssignment;
+	}
+
+	public static Quiz getQuizModel(QuizVO quiz) {
+		Quiz quizModel = new Quiz();
+		List<Question> questionsModel = new ArrayList<>();
+		if (quiz != null) {
+			quizModel.setId(quiz.getId());
+			quizModel.setTopic_id(quiz.getTopicId());
+			quizModel.setQuiz_name(quiz.getQuizName());
+			List<QuestionVO> questions = quiz.getQuestions();
+			for (QuestionVO q : questions) {
+				Question question = new Question();
+				question.setId(q.getId());
+				question.setQuestion(q.getQuestion());
+				question.setAnswer(q.getAnswer());
+				question.setOption1(q.getOption1());
+				question.setOption2(q.getOption2());
+				questionsModel.add(question);
+			}
+			quizModel.setQuestions(questionsModel);
+		}
+		return quizModel;
+	}
+
+	public static QuizVO getQuizVO(Quiz q) {
+		QuizVO vo = new QuizVO();
+		List<QuestionVO> qs = new ArrayList<>();
+		vo.setId(q.getId());
+		vo.setQuizName(q.getQuiz_name());
+		vo.setTopicId(q.getTopic_id());
+		List<Question> ques = q.getQuestions();
+		for (Question qu : ques) {
+			QuestionVO qvo = new QuestionVO();
+			qvo.setId(qu.getId());
+			qvo.setQuestion(qu.getQuestion());
+			qvo.setAnswer(qu.getAnswer());
+			qvo.setOption1(qu.getOption1());
+			qvo.setOption2(qu.getOption2());
+			qs.add(qvo);
+		}
+		vo.setQuestions(qs);
+		return vo;
+	}
+
+	public static VideoVO getVideoVO(Topic topic) {
+		VideoVO vo = new VideoVO();
+		if (topic != null) {
+			APIClient apiClient = new APIClient();
+			Vimeo vimeo = apiClient.getVideoLink(topic.getVideoLink());
+			vo.setVideoLink(vimeo.getVideoLlink());
+			vo.setVideoThumbnail(vimeo.getThumbLInk());
+			vo.setVideoSubtitle(vimeo.getSubTitle());
+		}
+		return vo;
+
+	}
+
+	public static StudentFeeVO getStudentFeeVO(StudentVO student) {
+		StudentFeeVO studentVO = new StudentFeeVO();
+		studentVO.setId(student.getId());
+		studentVO.setFirstName(student.getFirstName());
+		studentVO.setLastName(student.getLastName());
+		studentVO.setMiddleName(student.getMiddleName());
+		studentVO.setGradeId(student.getGradeId());
+		studentVO.setGradeName(student.getGradeName());
+		studentVO.setSchoolId(student.getSchoolId());
+		return studentVO;
+	}
+
 }

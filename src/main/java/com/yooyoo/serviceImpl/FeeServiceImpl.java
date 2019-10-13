@@ -20,6 +20,7 @@ import com.yooyoo.repository.StudentRepository;
 import com.yooyoo.service.FeesService;
 import com.yooyoo.util.VOMapper;
 import com.yooyoo.vo.FeesVO;
+import com.yooyoo.vo.StudentFeeVO;
 
 @Service
 public class FeeServiceImpl implements FeesService {
@@ -35,19 +36,38 @@ public class FeeServiceImpl implements FeesService {
 
 	@Override
 	public void saveFeesForStudent(FeesVO fees) {
+		if(fees.getStudentId() != 0){
 		Optional<School> school = schoolRepo.findById(fees.getSchoolId());
 		Student student = studentRepo.findById(fees.getStudentId());
 		Fees fee = VOMapper.getFeesModel(fees);
+		if(fees.getId() != null){
+			fee.setId(fees.getId());
+		}
 		fee.setStudent(student);
 		fee.setSchool(school.get());
 		fee.setDeleted("N");
 		repository.save(fee);
+		}
 
 	}
 
 	@Override
 	public void updateFees(FeesVO fee) {
-		// TODO Auto-generated method stub
+		Optional<Fees> opt = null;
+		if(fee.getId() != null){
+			opt = repository.findById(fee.getId());
+			if(opt.isPresent()){
+				Optional<School> school = schoolRepo.findById(fee.getSchoolId());
+				Student student = studentRepo.findById(fee.getStudentId());
+				Fees fees = VOMapper.getFeesModel(fee);
+				fees.setStudent(student);
+				fees.setSchool(school.get());
+				fees.setDeleted("N");
+				repository.save(fees);
+				
+			}
+		}
+		
 
 	}
 
@@ -90,6 +110,16 @@ public class FeeServiceImpl implements FeesService {
 			throw new Exception("Could not store file " + fileName + ". Please try again!", ex);
 		}
 
+	}
+
+	@Override
+	public FeesVO getFeesByStudent(StudentFeeVO feeVO) {
+		FeesVO feesVO = null;
+		List<Fees> fees = repository.findByStudentId(feeVO.getId());
+		if (fees != null && !fees.isEmpty()) {
+			feesVO = VOMapper.getFeesVO(fees.get(0));
+		}
+		return feesVO;
 	}
 
 }

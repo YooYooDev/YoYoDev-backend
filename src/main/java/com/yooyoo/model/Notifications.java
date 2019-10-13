@@ -3,6 +3,7 @@ package com.yooyoo.model;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -45,9 +46,8 @@ public class Notifications {
 	@JoinColumn(name = "school_id")
 	private School school;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "student_id")
-	private Student student;
+	@Column(name = "student_id")
+	private Integer studentId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "grade_id")

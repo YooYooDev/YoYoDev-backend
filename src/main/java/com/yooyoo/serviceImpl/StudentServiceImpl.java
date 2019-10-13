@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +18,11 @@ import com.yooyoo.repository.GradeRepository;
 import com.yooyoo.repository.SchoolRepository;
 import com.yooyoo.repository.StudentRepository;
 import com.yooyoo.service.StudentService;
+import com.yooyoo.util.EmailUtil;
 import com.yooyoo.util.VOMapper;
 import com.yooyoo.vo.GradeVO;
 import com.yooyoo.vo.ResultVO;
+import com.yooyoo.vo.StudentEmailVO;
 import com.yooyoo.vo.StudentVO;
 
 @Service
@@ -45,6 +49,7 @@ public class StudentServiceImpl implements StudentService{
 					s.setSchool(school);
 					s.setGrade(grade);
 					studentRepository.save(s);
+					sendStudentEmail(student, school);
 					String message = "Student Info saved sucessfully...";
 					vo.setStatus(200);
 					vo.setMessage(message);
@@ -112,11 +117,16 @@ public class StudentServiceImpl implements StudentService{
 	}
 
 	@Override
-	public void deleteStudent(int studentId) {
+	public void deleteStudent(int studentId, boolean delete) {
 		Student student = studentRepository.findById(studentId);
-		student.setDeleted("Y");
-		studentRepository.save(student);
-		
+		if (delete) {
+			studentRepository.delete(student);
+		} else {
+			student.setDeleted("Y");
+			studentRepository.save(student);
+
+		}
+
 	}
 
 	@Override
@@ -160,14 +170,32 @@ public class StudentServiceImpl implements StudentService{
 		try{
 			if(students != null && !students.isEmpty()){
 				for(StudentVO student:students){
+					student.setDeleted(1);
 					saveStudent(student);
 				}
 				status = true;
 			}
 		}catch(Exception e){
+			System.out.println("Hello:- "+e.getMessage());
+			e.printStackTrace();
 			status = false;
 		}
 		return status;
+	}
+	
+	public void sendStudentEmail(StudentVO student, School school){
+		StudentEmailVO emailVO = new StudentEmailVO();
+		emailVO.setName(student.getFirstName());
+		emailVO.setEmial(student.getPrimaryEmail());
+		emailVO.setPassword(student.getPassword());
+		emailVO.setSchoolCode(new String(school.getCode()+""));
+		try {
+			EmailUtil.sendStudentEmail(emailVO);
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }

@@ -9,9 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -22,7 +24,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "fees")
+@Table(name = "fees", uniqueConstraints={
+		   @UniqueConstraint(columnNames={"student_id", "school_id"})
+		})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -43,15 +47,14 @@ public class Fees {
 	@JoinColumn(name = "student_id")
 	Student student ;
 	
-	@Column(name = "total_bill_amount")
-	Float totalBillAmount;
+	Float tutionFee;
 	
-	@Column(name = "paid_bill_amount")
-	Float paidBillAmount;
+	Float transportationFee;
 	
-	@Column(name = "pending_amount")
-	Float pendingAmount;
+	Float paidTutionFee;
 	
+    Float paidTransportFee;
+    
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "school_id")
 	private School school;
@@ -60,10 +63,9 @@ public class Fees {
 	Date updatedd_at;
 	String deleted ;
 	
+	@Lob
+	@Column(length=100000)
 	private byte[] image1;
-	private Byte[] image2;
-	private Byte[] image3;
-	private Byte[] image4;
-	private Byte[] image5;
+	
 
 }

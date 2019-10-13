@@ -26,7 +26,6 @@ public class AttendanceController {
 	private AttendanceService attendanceService; 
 	
 	@PostMapping("/save")
-
 	public ResponseEntity<Boolean> saveAttendance(@RequestBody AttendanceVO attendance) {
 		logger.info("Save saveAttendance Method hit "+attendance.getSchoolId());
 		try {
@@ -45,6 +44,20 @@ public class AttendanceController {
 		List<AttendanceVO> atts = null;
 		try {
 			atts = attendanceService.getAttandanceDetails(schoolId);
+		} catch (Exception e) {
+			logger.debug("Error While Save the saveAttendance Details" + e.getMessage());
+			logger.error("Error While Save the saveAttendance Details" + e.getStackTrace());
+			return new ResponseEntity<>(atts, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(atts, HttpStatus.OK);
+	}
+	
+	@GetMapping("/load/{schoolId}/{grade:.+}")
+	public ResponseEntity<AttendanceVO> getAttendancebySchoolAndGrade(@PathVariable("schoolId") int schoolId, @PathVariable("grade") String grade) {
+		logger.info("get Attendance Method hit " + schoolId);
+		AttendanceVO atts = null;
+		try {
+			atts = attendanceService.getAttandanceDetailsBySchoolAndGrade(schoolId, grade);
 		} catch (Exception e) {
 			logger.debug("Error While Save the saveAttendance Details" + e.getMessage());
 			logger.error("Error While Save the saveAttendance Details" + e.getStackTrace());

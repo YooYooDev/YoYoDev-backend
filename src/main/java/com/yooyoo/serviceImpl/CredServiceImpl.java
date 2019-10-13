@@ -1,9 +1,13 @@
 package com.yooyoo.serviceImpl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +19,7 @@ import com.yooyoo.repository.CredManagerRepository;
 import com.yooyoo.repository.RoleRepository;
 import com.yooyoo.repository.SchoolRepository;
 import com.yooyoo.service.CredService;
+import com.yooyoo.util.EmailUtil;
 import com.yooyoo.util.VOMapper;
 import com.yooyoo.vo.CredManagerVO;
 import com.yooyoo.vo.ResultVO;
@@ -40,7 +45,7 @@ public class CredServiceImpl implements CredService{
 		manager.setRole(role.get());
 		Optional<School> school = schoolRepository.findById(credVo.getSchoolId());
 		manager.setSchool(school.get());
-		manager.setPassword("Welcome@123");
+		manager.setPassword(credVo.getPassword());
 		repository.save(manager);
 		result.setStatus(200);
 		result.setMessage("User Created Sucessfully...");
@@ -108,6 +113,18 @@ public class CredServiceImpl implements CredService{
 	public List<CredManagerVO> getCredManagerBySchool(int schoolId) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void sendPasswordEmail(CredManagerVO credVo) throws Exception {
+		CredManager cred = repository.getUserDetailsByEmail(credVo.getEmail());
+		if(cred != null){
+				EmailUtil.sendmail(credVo.getEmail(), cred.getPassword());
+			
+		}else{
+			throw new Exception();
+		}
+		
 	}
 
 }

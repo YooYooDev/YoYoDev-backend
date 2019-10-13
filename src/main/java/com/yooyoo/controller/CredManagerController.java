@@ -55,6 +55,20 @@ public class CredManagerController {
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 	
+	@PostMapping("/resetpassword")
+	public ResponseEntity<Boolean> sendPasswordEmail(@RequestBody CredManagerVO credVO) {
+		logger.info("update CredUser Method hit "+credVO.getEmail());
+		
+		try {
+			service.sendPasswordEmail(credVO);
+		} catch (Exception e) {
+			logger.debug("Error While update Save the School Details");
+			logger.error("Error While update Save the School Details"+e.getStackTrace());
+			return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+	
 	@PostMapping("/delete/{id}")
 	public ResponseEntity<ResultVO> deleteCredManager(@PathVariable("id") int id) {
 		ResultVO vo = null;

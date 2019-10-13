@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.yooyoo.vo.FeesVO;
+import com.yooyoo.vo.StudentFeeVO;
 
 public interface FeesService {
 	
@@ -17,5 +18,7 @@ public interface FeesService {
 	public List<FeesVO> getAllFeesBySchool(int schoolId);
 	
 	void saveImageFile(int id, MultipartFile file)throws Exception;
+
+	public FeesVO getFeesByStudent(StudentFeeVO feeVO);
 
 }

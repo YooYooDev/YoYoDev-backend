@@ -38,8 +38,8 @@ public class Profile implements Serializable {
 	private School school;
 
 	@XmlElement
-	@JsonProperty("students")
-	private List<StudentVO> students;
+	@JsonProperty("student")
+	private StudentVO student;
 
 	private String message;
 	

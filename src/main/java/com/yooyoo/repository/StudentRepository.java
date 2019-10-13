@@ -22,8 +22,11 @@ public interface StudentRepository extends CrudRepository<Student, Integer>{
 	public static String GET_STUDENTS_BY_NAME_EMAIL_MOBILE_SCHOOL = "select s from Student s where s.school.id = :schoolId "
 			+ "AND s.first_name = :fname and s.p_email = :pEmail and s.parent_mobile1 = :pMobile";
 	
-	public static String GET_STUDENTS_BY_SCHOOL_MOBILE_PASSWORD = "select s from Student s where s.school.id = :schoolId "
-			+ "AND s.password = :password  and s.parent_mobile1 = :pMobile";
+	public static String GET_STUDENTS_BY_SCHOOL_EMAIL_PASSWORD = "select s from Student s where s.school.id = :schoolId "
+			+ "AND s.password = :password  and s.p_email = :pemail";
+	
+	public static String GET_STUDENTS_BY_EMAI = "select s from Student s where  "
+			+ "s.s_email = :pemail  or s.p_email = :pemail";
 	
 	
 	@Query(GET_STUDENTS_BY_SCHOOL)
@@ -39,9 +42,13 @@ public interface StudentRepository extends CrudRepository<Student, Integer>{
 	
 	public Student findById(int id);
 
-	@Query(GET_STUDENTS_BY_SCHOOL_MOBILE_PASSWORD)
+	@Query(GET_STUDENTS_BY_SCHOOL_EMAIL_PASSWORD)
 	public List<Student> getStudentDetailsBySchoolMobileAndPassword(@Param("schoolId") Integer schoolId,
-			@Param("password") String password, @Param("pMobile") String pMobile);
+			@Param("password") String password, @Param("pemail") String pEmail);
+
+	
+	@Query(GET_STUDENTS_BY_EMAI)
+	public List<Student> getStudentDetailsByEmail( @Param("pemail") String pEmail);
 	
 
 }
