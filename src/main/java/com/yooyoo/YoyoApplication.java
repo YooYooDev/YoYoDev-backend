@@ -14,6 +14,8 @@ public class YoyoApplication {
 		SpringApplication.run(YoyoApplication.class, args);
 
 	}
+	
+	
 
 }
 

@@ -74,6 +74,22 @@ public class LoginController {
 		    return profile;  
 		}
 	 
+	 @RequestMapping(value = "/yooyoo/b2c/mobilelogin", method = RequestMethod.POST)
+	 public Profile loginB2CMobileUser(@RequestBody LoginVO userForm) {
+		 logger.info("Loggedin User details  :- "+userForm.getMobileNo()+":"+userForm.getOtp());
+		 Profile profile = loginService.authenticateB2CMobileUser(userForm);
+	        logger.info("UserDetails for mobile  :- "+profile);
+		    return profile;  
+		}
+	 
+	 @RequestMapping(value = "/yooyoo/b2c/sendotp", method = RequestMethod.POST)
+	 public boolean sendOtp(@RequestBody LoginVO userForm) {
+		 logger.info("Otp Send API called");
+		 boolean otpSent = loginService.sendOtpForB2C(userForm);
+	        logger.info("Otp Send API called");
+		    return otpSent;  
+		}
+	 
 	 @RequestMapping(value = "/yooyoo/forgotpassword", method = RequestMethod.POST)
 	 public ResultVO sendEmail(@RequestBody LoginVO userForm) {
 		 ResultVO result = loginService.sendForgotPasswordEmail(userForm);

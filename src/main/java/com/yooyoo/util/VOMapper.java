@@ -37,7 +37,7 @@ import com.yooyoo.vo.VideoVO;
 
 public class VOMapper {
 
-	static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+	public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
 	public static Student getStudent(StudentVO studentVO) {
 		Student student = new Student();
@@ -104,6 +104,7 @@ public class VOMapper {
 
 	public static StudentVO getStudent(Student student) {
 		StudentVO studentVO = new StudentVO();
+		String deleted = "N";
 		studentVO.setId(student.getId());
 		studentVO.setFirstName(student.getFirst_name());
 		studentVO.setLastName(student.getLast_name());
@@ -114,7 +115,9 @@ public class VOMapper {
 		studentVO.setSecondaryEmail(student.getS_email());
 		studentVO.setParentMobile1(student.getParent_mobile1());
 		studentVO.setParentMobile2(student.getParent_mobile2());
-		String deleted = student.getDeleted();
+		if(student.getDeleted() != null){
+			deleted = student.getDeleted();
+		}
 		if (deleted.equalsIgnoreCase("N")) {
 			studentVO.setDeleted(0);
 		} else if (deleted.equalsIgnoreCase("Y")) {
@@ -294,7 +297,7 @@ public class VOMapper {
 		DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yy");
 		String strDate = dateFormat.format(assignment.getDate());
 		mobileAssignment.setDate(strDate);
-		mobileAssignment.setDescription(assignment.getSubject().getName() + " : " + assignment.getTopic().getName());
+		mobileAssignment.setDescription(assignment.getTopic().getName());
 
 		return mobileAssignment;
 	}

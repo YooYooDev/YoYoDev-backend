@@ -3,30 +3,35 @@ package com.yooyoo.vo;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class StudentVO implements Serializable{
+@JsonInclude(value = Include.NON_NULL)
+public class StudentVO implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	int id ;
+	int id;
 	String firstName;
 	String middleName;
-	String lastName ;
+	String lastName;
 	String role;
-    int schoolId;
-    int gradeId;
+	int schoolId;
+	int gradeId;
 	String primaryEmail;
 	String secondaryEmail;
 	String parentMobile1;
@@ -35,7 +40,7 @@ public class StudentVO implements Serializable{
 	Date createdAt;
 	Date updatedAt;
 	int deleted;
-	
+
 	String dob;
 	String photo;
 	String gender;

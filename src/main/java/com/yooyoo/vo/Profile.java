@@ -1,8 +1,6 @@
 package com.yooyoo.vo;
 
 import java.io.Serializable;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlElement;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yooyoo.model.School;
@@ -42,6 +40,8 @@ public class Profile implements Serializable {
 	private StudentVO student;
 
 	private String message;
+	
+	private Integer b2cId;
 	
 	private Integer status;
 

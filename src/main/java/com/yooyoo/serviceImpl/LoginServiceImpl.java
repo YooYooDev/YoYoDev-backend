@@ -1,8 +1,11 @@
 package com.yooyoo.serviceImpl;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
@@ -14,15 +17,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yooyoo.model.B2CCustomer;
 import com.yooyoo.model.CredManager;
 import com.yooyoo.model.School;
 import com.yooyoo.model.SessionManager;
 import com.yooyoo.model.Student;
+import com.yooyoo.repository.B2CCustomerRepository;
 import com.yooyoo.repository.CredManagerRepository;
 import com.yooyoo.repository.SchoolRepository;
 import com.yooyoo.repository.SessionRepository;
 import com.yooyoo.repository.StudentRepository;
+import com.yooyoo.service.B2CService;
 import com.yooyoo.service.LoginService;
+import com.yooyoo.util.APIClient;
 import com.yooyoo.util.EmailUtil;
 import com.yooyoo.util.VOMapper;
 import com.yooyoo.vo.LoginVO;
@@ -44,6 +51,14 @@ public class LoginServiceImpl implements LoginService {
 	
 	@Autowired
 	SessionRepository sessionRepo;
+	
+	@Autowired
+	B2CCustomerRepository b2cRepo;
+	
+	@Autowired
+	B2CService becService;
+	
+	public static final String defaultMobile = "1234567899";
 
 	@Override
 	public CredManager authenticate(CredManager credManager) {
@@ -138,6 +153,105 @@ public class LoginServiceImpl implements LoginService {
 		}
 		return result;
 	}
+	
+	@Override
+	public Profile authenticateB2CMobileUser(LoginVO loginVO) {
+		Profile profile = new Profile();
+
+		if (loginVO.getMobileNo() != null) {
+			List<B2CCustomer> customers = becService.getB2CCustomersByMobile(loginVO.getMobileNo(), loginVO.getOtp());
+			if (customers != null && !customers.isEmpty()) {
+				String sessionId = UUID.randomUUID().toString();
+				profile.setSchool(customers.get(0).getSchool());
+				List<StudentVO> studentsVos = new ArrayList<>();
+				for (B2CCustomer student : customers) {
+					SessionManager sessionManager = sessionRepo.findByUserId(student.getStudent().getId());
+					if (sessionManager != null) {
+						profile.setAccessToken(sessionManager.getSessionId());
+					} else {
+						SessionManager manager = new SessionManager();
+						manager.setSessionId(sessionId);
+						manager.setUserId(student.getStudent().getId());
+						manager.setSource("mobile");
+						sessionRepo.save(manager);
+						profile.setAccessToken(sessionId);
+					}
+					StudentVO vo = new StudentVO();
+					vo = VOMapper.getStudent(customers.get(0).getStudent());
+					vo.setDob(student.getBirthdate());
+					vo.setGender(student.getGender());
+					studentsVos.add(vo);
+					profile.setB2cId(student.getId());
+				}
+				profile.setStudent(studentsVos.get(0));
+				profile.setStatus(200);
+				profile.setMessage("User Loggedin Sucessfully...");
+			} else {
+				profile.setMessage("User not found with given mobileno");
+				profile.setStatus(404);
+			}
+		} else {
+			profile.setMessage("School not found with given mobile");
+			profile.setStatus(404);
+		}
+
+		return profile;
+	}
+
+	@Override
+	public boolean sendOtpForB2C(LoginVO userForm) {
+		boolean otpSent = false;
+		if (userForm.getMobileNo() != null) {
+			List<B2CCustomer> customers = becService.getB2CCustomersByMobile(userForm.getMobileNo());
+			if (customers != null && !customers.isEmpty() && !defaultMobile.equalsIgnoreCase(userForm.getMobileNo())) {
+				Random random = new Random();
+				String otp = String.format("%04d", random.nextInt(10000));
+				B2CCustomer c = customers.get(0);
+				c.setOtp(otp);
+				try {
+					APIClient.sendOtp(userForm.getMobileNo(), otp);
+					b2cRepo.save(c);
+					otpSent = true;
+				} catch (MalformedURLException | UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}else if(defaultMobile.equalsIgnoreCase(userForm.getMobileNo())){
+				otpSent = true;
+			}
+
+		}
+		return otpSent;
+	}
+	
+	@Override
+	public String sendOtpForB2CForReg(String mobile, String email) throws MalformedURLException, UnsupportedEncodingException {
+		String otpSent = null;
+		if (mobile != null) {
+			List<B2CCustomer> customers = becService.getB2CCustomersByMobile(mobile);
+			if (customers != null && !customers.isEmpty()) {
+				Random random = new Random();
+				String otp = String.format("%04d", random.nextInt(10000));
+				B2CCustomer c = customers.get(0);
+				c.setOtp(otp);
+				try {
+					EmailUtil.sendB2cOtpemail(email, otp);
+				} catch (MessagingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				APIClient.sendOtp(mobile, otp);
+				b2cRepo.save(c);
+				otpSent = otp;
+
+			}
+
+		}
+		return otpSent;
+	}
+
+
 
 }
 

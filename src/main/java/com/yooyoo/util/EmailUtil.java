@@ -5,6 +5,7 @@ import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 
+import com.yooyoo.model.B2CCustomer;
 import com.yooyoo.vo.StudentEmailVO;
 
 public class EmailUtil {
@@ -85,6 +86,70 @@ public class EmailUtil {
 		msg.setContent(multipart);
 		Transport.send(msg);
 	
+	}
+	
+	public static void sendB2cIntrestedemail(B2CCustomer b2c) throws AddressException, MessagingException{
+        Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+		props.put("mail.imap.ssl.enable", "true");
+		props.put("mail.imap.auth.mechanisms", "XOAUTH2");
+
+		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication("yooyooschools@gmail.com", "5a508a44-f861-4f53-9c27-9c33796fdf15");
+			}
+		});
+		Message msg = new MimeMessage(session);
+		msg.setFrom(new InternetAddress("yooyooschools@gmail.com", false));
+
+		msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse("yooyookids@gmail.com"));
+		msg.setSubject("Intrested User");
+		msg.setSentDate(new Date());
+
+		MimeBodyPart messageBodyPart = new MimeBodyPart();
+		messageBodyPart.setContent("<p>" + "Users Details" + ",<BR>"
+				+ "User Name No  is :"+b2c.getName() + "<BR>"
+				+ "User Email is :"+b2c.getEmail()+ "<BR>"
+				+ "User Mobile no is :"+ b2c.getMobile()+ "<BR>"
+				+ "User Grade is  :"+b2c.getGrade()+"<BR><BR>", "text/html");
+
+		Multipart multipart = new MimeMultipart();
+		multipart.addBodyPart(messageBodyPart);
+		msg.setContent(multipart);
+		Transport.send(msg);
+	}
+	
+	public static void sendB2cOtpemail(String email,String otp) throws AddressException, MessagingException{
+        Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+		props.put("mail.imap.ssl.enable", "true");
+		props.put("mail.imap.auth.mechanisms", "XOAUTH2");
+
+		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication("yooyooschools@gmail.com", "5a508a44-f861-4f53-9c27-9c33796fdf15");
+			}
+		});
+		Message msg = new MimeMessage(session);
+		msg.setFrom(new InternetAddress("yooyooschools@gmail.com", false));
+
+		msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+		msg.setSubject("OTP Message");
+		msg.setSentDate(new Date());
+
+		MimeBodyPart messageBodyPart = new MimeBodyPart();
+		messageBodyPart.setContent("OTP for YooYoo login is :"+otp, "text/html");
+
+		Multipart multipart = new MimeMultipart();
+		multipart.addBodyPart(messageBodyPart);
+		msg.setContent(multipart);
+		Transport.send(msg);
 	}
 	
 	public static void main(String[] args) {

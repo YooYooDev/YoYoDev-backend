@@ -1,7 +1,8 @@
-package com.yooyoo.vo;
+package com.yooyoo.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,12 +12,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class LoginVO {
-	private String userName;
-	private String password;
-	private String email;
-	private String schoolCode;
-	private String mobileNo;
-	private String otp;
+@EqualsAndHashCode
+public class OtpStatus {
+
+	String statusCode;
+
+	String errorMessage;
+
+	String errorCode;
 
 }

@@ -1,5 +1,16 @@
 package com.yooyoo.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -43,6 +54,31 @@ public class APIClient {
 		return vimeo;
 	}
 	
+	public static OtpPojo sendOtp(String mobileNo, String otp) throws MalformedURLException, UnsupportedEncodingException {
+		OtpPojo otpPojo = null;
+		
+		String url = YooYooAppConstants.YOOYOO_OTP_PREFEX + mobileNo + YooYooAppConstants.MIDDLE + otp+YooYooAppConstants.YOOYOO_OTP_MESSAGE
+				+ YooYooAppConstants.YOOYOO_OTP_POSTFIX;
+		RestTemplate restTemplate = new RestTemplate();
+		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();        
+		//Add the Jackson Message converter
+		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+
+		// Note: here we are making this converter to process any kind of response, 
+		// not only application/*json, which is the default behaviour
+		converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));        
+		messageConverters.add(converter);  
+		restTemplate.setMessageConverters(messageConverters); 
+		otpPojo = restTemplate.getForObject(url, OtpPojo.class);
+
+		return otpPojo;
+
+	}
+	
+	public static void main(String[] args) throws MalformedURLException, UnsupportedEncodingException {
+		OtpPojo otpPojo = sendOtp("7899898555", "098990");
+		System.out.println("Result is "+otpPojo.getResult().getStatus().getStatusCode());
+	}
 	 
 	
 	

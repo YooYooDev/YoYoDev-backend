@@ -32,4 +32,12 @@ public interface YooYooAppConstants {
 	public static final String FORGOTPASSWORD ="Forgot Password:<BR>You requested the password for your account. The password issued to you is: <BR> ";	
 
 	public static final String DONTSHARE = "<p>We recommend that you keep your password secure and not share it with anyone.</p>";
+	
+	public static final String YOOYOO_OTP_PREFEX = "https://www.msg2all.com/TRANSAPI/sendsms.jsp?login=yooyoo&passwd=yooyoo@321&version=v1.0&msisdn=91";
+			
+	public static final String MIDDLE = "&msg_type=text&msg=";
+	
+	public static final String YOOYOO_OTP_POSTFIX = "&sender_id=YOOYOO";
+	
+	public static final String YOOYOO_OTP_MESSAGE = "​-is your one time password (OTP) for YOOYOO application.";
 }

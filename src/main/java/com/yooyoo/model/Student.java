@@ -15,11 +15,10 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +29,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
 @EqualsAndHashCode
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -66,6 +64,7 @@ public class Student {
 	String address;
 	String city;
 	String state;
+	String type ="B2B";
 	String pinCode;
 	@ManyToOne
 	@JoinColumn(name = "grade_id")
